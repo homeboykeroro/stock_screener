@@ -1,4 +1,5 @@
 /screener-venv/
 *.csv
+*.html
 .vscode
 __pycache__
