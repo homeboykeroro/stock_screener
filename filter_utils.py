@@ -97,9 +97,11 @@ def select_data_df_from_row_number( src_data_df: DataFrame, src_row_no_df: DataF
 
     return src_data_df.where( idx_boolean_df.values )
 
-def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fill_value_df: DataFrame, volatility: float, min_consolidation_period: int ) -> DataFrame:
-    min_tolerance = 1 - ( volatility/ 100 )
-    max_tolerance = 1 + ( volatility/ 100 )
+def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fill_value_df: DataFrame, 
+                        consolidation_tolerance: float, consolidation_indicators: list, count_mode: str,
+                        min_consolidation_period: int ) -> DataFrame:
+    min_tolerance = 1 - ( consolidation_tolerance/ 100 )
+    max_tolerance = 1 + ( consolidation_tolerance/ 100 )
 
     repeat_src_low_df = pd.DataFrame( np.repeat( src_low_df.values, len( src_low_df ), axis=0 ), columns=src_low_df.columns, index=np.repeat( src_low_df.reset_index().index.tolist(), len( src_low_df ), axis=0 ) ).rename( columns={ 'Low': 'Compare' } )
     expand_src_low_df = pd.concat( [ src_low_df ] * len( src_low_df ) ).rename( columns={ 'Low': 'Compare' } )
@@ -116,6 +118,9 @@ def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fi
 
     low_in_range_boolean_df = None
     close_in_range_boolean_df = None
+    low_in_range_boolean_count_df = None
+    close_in_range_boolean_count_df = None
+    result_boolean_df = None
 
     if gap_fill_value_df is not None and not gap_fill_value_df.empty:
         gap_fill_value_df = ( pd.concat( [ gap_fill_value_df ] * len( repeat_idx_df ) ).set_index( repeat_src_low_df.index ) )
@@ -126,18 +131,19 @@ def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fi
         low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df )
         close_in_range_boolean_df = ( repeat_src_close_df >= min_close_df ) & ( repeat_src_close_df <= max_close_df )
 
-    low_in_range_consecutive_count_boolean_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
-    close_in_range_consecutive_count_boolean_df = get_consecutive_count_boolean_df( close_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
+    if count_mode == 'CONSECUTIVE':
+        low_in_range_boolean_count_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
+        close_in_range_boolean_count_df = get_consecutive_count_boolean_df( close_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
+    elif count_mode == 'SUM':
+        low_in_range_boolean_count_df = low_in_range_boolean_df.groupby().sum() >= min_consolidation_period
+        close_in_range_boolean_count_df = close_in_range_boolean_df.groupby().sum() >= min_consolidation_period
+    
+    if ( 'Low' in consolidation_indicators ) and ( 'Close' in consolidation_indicators ):
+        result_boolean_df = ( low_in_range_boolean_count_df ) | ( close_in_range_boolean_count_df )
+    elif 'Low' in consolidation_indicators:
+        result_boolean_df = low_in_range_boolean_count_df
+    elif 'Close' in consolidation_indicators:
+        result_boolean_df = close_in_range_boolean_count_df
 
-    result_boolean_df = ( low_in_range_consecutive_count_boolean_df ) | ( close_in_range_consecutive_count_boolean_df )
     result_boolean_df = pd.DataFrame( result_boolean_df.any() ).T
-
-    # repeat_src_low_df.to_csv('D:/Downloads/Temp/repeat_src_low_df.csv')
-    # expand_src_low_df.to_csv('D:/Downloads/Temp/expand_src_low_df.csv')
-    # low_in_range_boolean_df.to_csv('D:/Downloads/Temp/low_in_range_boolean_df.csv')
-    # low_in_range_consecutive_count_boolean_df.to_csv('D:/Downloads/Temp/low_in_range_consecutive_count_boolean_df.csv')
-    # close_in_range_boolean_df.to_csv('D:/Downloads/Temp/close_in_range_boolean_df.csv')
-    # repeat_idx_df.to_csv('D:/Downloads/Temp/repeat_idx_df.csv')
-    # repeat_idx_boolean_df.to_csv('D:/Downloads/Temp/repeat_idx_boolean_df.csv')
-
     return result_boolean_df

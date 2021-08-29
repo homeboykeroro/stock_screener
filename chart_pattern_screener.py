@@ -13,8 +13,8 @@ idx = pd.IndexSlice
 #May Add Uptrend Triangle, VCP pattern
 
 def filter_by_unfill_gap_up( 
-            unusual_gap_up_pct=1, unusual_close_pct=5,
-            compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=320000, 
+            unusual_gap_up_pct=1, unusual_close_pct=7,
+            compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
             min_consolidation_day=4, gap_fill_tolerance=None, 
             day_period=35, **kwargs ):
@@ -62,11 +62,12 @@ def filter_by_unfill_gap_up(
 
 def filter_by_consolidation_after_uptrend_momentum( 
             unusual_gap_up_pct=None, unusual_close_pct=5,
-            compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=320000, 
+            compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='LAST',
-            consolidation_tolerance=4, min_consolidation_day=5,
+            consolidation_tolerance=4, consolidation_indicators=['Low', 'Close'], count_mode='CONSECUTIVE',
+            min_consolidation_day=5,
             recent_upside_consolidation_day=None,
-            day_period=20, **kwargs ):
+            day_period=35, **kwargs ):
     start_time = time.time()
     result_ticker_list = []
 
@@ -96,13 +97,17 @@ def filter_by_consolidation_after_uptrend_momentum(
                 consolidation_boolean_df = get_consolidation_df( selected_low_df.iloc[-recent_upside_consolidation_day:], 
                                                                 selected_close_df.iloc[-recent_upside_consolidation_day:], 
                                                                 gap_fill_value_df,
-                                                                consolidation_tolerance, 
+                                                                consolidation_tolerance,
+                                                                consolidation_indicators, 
+                                                                count_mode,
                                                                 min_consolidation_day )
             else:
                 consolidation_boolean_df = get_consolidation_df( selected_low_df,
                                                                 selected_close_df,
                                                                 gap_fill_value_df,
                                                                 consolidation_tolerance,
+                                                                consolidation_indicators,
+                                                                count_mode,
                                                                 min_consolidation_day )
 
             result_boolean_df = ( min_consolidation_day_boolean_df ) & ( consolidation_boolean_df )
