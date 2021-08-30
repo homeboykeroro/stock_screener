@@ -90,25 +90,16 @@ def filter_by_consolidation_after_uptrend_momentum(
             
             selected_low_df = select_data_df_from_row_number( low_df, unusual_vol_and_upside_idx_df )
             selected_close_df = select_data_df_from_row_number( close_df, unusual_vol_and_upside_idx_df )
-            gap_fill_value_df = get_single_row_data_result_df_by_row_number( low_df, unusual_vol_and_upside_idx_df.sub( 1 ) )
+            gap_fill_value_df = get_single_row_data_result_df_by_row_number( low_df, unusual_vol_and_upside_idx_df )
             consolidation_boolean_df = None
 
-            if recent_upside_consolidation_day != None:
-                consolidation_boolean_df = get_consolidation_df( selected_low_df.iloc[-recent_upside_consolidation_day:], 
-                                                                selected_close_df.iloc[-recent_upside_consolidation_day:], 
-                                                                gap_fill_value_df,
-                                                                consolidation_tolerance,
-                                                                consolidation_indicators, 
-                                                                count_mode,
-                                                                min_consolidation_day )
-            else:
-                consolidation_boolean_df = get_consolidation_df( selected_low_df,
-                                                                selected_close_df,
-                                                                gap_fill_value_df,
-                                                                consolidation_tolerance,
-                                                                consolidation_indicators,
-                                                                count_mode,
-                                                                min_consolidation_day )
+            consolidation_boolean_df = get_consolidation_df( selected_low_df,
+                                                            selected_close_df,
+                                                            gap_fill_value_df,
+                                                            consolidation_tolerance,
+                                                            consolidation_indicators,
+                                                            count_mode,
+                                                            min_consolidation_day )
 
             result_boolean_df = ( min_consolidation_day_boolean_df ) & ( consolidation_boolean_df )
 

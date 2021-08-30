@@ -16,7 +16,7 @@ def get_unusual_vol_and_upside_idx_df(
             unusual_gap_up_pct: float, unusual_close_pct: float, 
             compare_unusual_vol_ma: int, unusual_vol_extent: float, unusual_vol_val: int,
             unusual_vol_and_upside_occurrence: str ) -> DataFrame:
-    unusual_vol_boolean_df = ( get_unusual_vol_boolean_df( historical_data_df, compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val ) ).rename( columns={ 'Unusual Vol': 'Compare' } )
+    unusual_vol_boolean_df = get_unusual_vol_boolean_df( historical_data_df, compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val ).rename( columns={ 'Unusual Vol': 'Compare' } )
     upside_change_boolean_df = get_upside_change_boolean_df( historical_data_df, unusual_gap_up_pct, unusual_close_pct ).rename( columns={ 'Up': 'Compare' } )
     unusual_vol_and_upside_change_boolean_df = ( upside_change_boolean_df ) & ( unusual_vol_boolean_df )
     
@@ -25,7 +25,7 @@ def get_unusual_vol_and_upside_idx_df(
     if unusual_vol_and_upside_occurrence == 'FIRST':
         unusual_vol_and_upside_idx_df = idx_df.where( unusual_vol_and_upside_change_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ]
     if unusual_vol_and_upside_occurrence == 'LAST':
-        unusual_vol_and_upside_idx_df = ( idx_df.where( unusual_vol_and_upside_change_boolean_df.values ).fillna( method='ffill' ).iloc[ [ -1 ] ] )
+        unusual_vol_and_upside_idx_df = idx_df.where( unusual_vol_and_upside_change_boolean_df.values ).fillna( method='ffill' ).iloc[ [ -1 ] ]
 
     return unusual_vol_and_upside_idx_df.rename( index={ unusual_vol_and_upside_idx_df.index.values[ 0 ]: 0 } )
 
@@ -135,8 +135,8 @@ def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fi
         low_in_range_boolean_count_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
         close_in_range_boolean_count_df = get_consecutive_count_boolean_df( close_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
     elif count_mode == 'SUM':
-        low_in_range_boolean_count_df = low_in_range_boolean_df.groupby().sum() >= min_consolidation_period
-        close_in_range_boolean_count_df = close_in_range_boolean_df.groupby().sum() >= min_consolidation_period
+        low_in_range_boolean_count_df = low_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_period
+        close_in_range_boolean_count_df = close_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_period
     
     if ( 'Low' in consolidation_indicators ) and ( 'Close' in consolidation_indicators ):
         result_boolean_df = ( low_in_range_boolean_count_df ) | ( close_in_range_boolean_count_df )
