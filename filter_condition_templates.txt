@@ -1,0 +1,2 @@
+[ { "operation": "consolidation_after_uptrend_momentum", "day_period": 30, "consolidation_tolerance": 3.2, "min_consolidation_range": 5, "unusual_vol_val": 500000, "count_mode": "SUM" } ]
+[ { "operation": "unfill_gap_up", "day_period": 60, "unusual_gap_up_pct": 3, "unusual_close_pct": 7 } ]

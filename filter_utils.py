@@ -80,28 +80,37 @@ def get_consecutive_count_boolean_df( src_boolean_df: DataFrame, consecutive_day
     
     return ( consecutive_pct_change_day_sum_df >= consecutive_day )
 
-def get_single_row_data_result_df_by_row_number( src_data_df: DataFrame, src_row_no_df: DataFrame ) -> DataFrame:
+def get_data_from_df_by_idx( src_data_df: DataFrame, src_idx_df: DataFrame ) -> DataFrame:
     idx_df = derive_idx_df_from_src_df( src_data_df )
-    expand_src_ref_row_no_df = pd.concat( [ src_row_no_df ] * len( src_data_df ) ).set_index( idx_df.index.values )
-    select_index_boolean_df = ( expand_src_ref_row_no_df == idx_df )
+    expand_src_idx_df = pd.concat( [ src_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
+    select_index_boolean_df = ( expand_src_idx_df == idx_df )
     
-    single_row_data_result_df = src_data_df.where( select_index_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ]
-    single_row_data_result_df.index.name = None
-    return single_row_data_result_df.rename( index={ single_row_data_result_df.index.values[ 0 ]: 0 }, columns={ single_row_data_result_df.columns.get_level_values( 1 ).values[ 0 ]: 'Compare' } )
+    result_df = src_data_df.where( select_index_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ].reset_index( drop=True )
+    return result_df.rename( index={ result_df.index.values[ 0 ]: 0 }, columns={ result_df.columns.get_level_values( 1 ).values[ 0 ]: 'Compare' } )
 
-def select_data_df_from_row_number( src_data_df: DataFrame, src_row_no_df: DataFrame ) -> DataFrame:
+def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: DataFrame, max_consolidation_range: int ) -> DataFrame:
     idx_df = derive_idx_df_from_src_df( src_data_df )
-    expand_src_ref_row_no_df = pd.concat( [ src_row_no_df ] * len( src_data_df ) ).set_index( idx_df.index.values )
+    expand_src_start_idx_df = pd.concat( [ src_start_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
 
-    idx_boolean_df = ( idx_df >= expand_src_ref_row_no_df )
+    if max_consolidation_range != None:
+        unusual_vol_and_upside_end_idx_df = src_start_idx_df.add( max_consolidation_range )
+        expand_src_end_idx_df = pd.concat( [ unusual_vol_and_upside_end_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
+        idx_boolean_df = ( idx_df >= expand_src_start_idx_df ) & ( idx_df <= expand_src_end_idx_df )
+    else:
+        idx_boolean_df = ( idx_df >= expand_src_start_idx_df )
 
     return src_data_df.where( idx_boolean_df.values )
 
-def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fill_value_df: DataFrame, 
-                        consolidation_tolerance: float, consolidation_indicators: list, count_mode: str,
-                        min_consolidation_period: int ) -> DataFrame:
+def get_consolidation_df( 
+            historical_data_df: DataFrame,
+            unusual_vol_and_upside_idx_df: DataFrame,
+            consolidation_tolerance: float, consolidation_indicators: list, count_mode: str,
+            min_consolidation_range, max_consolidation_range: int ) -> DataFrame:
     min_tolerance = 1 - ( consolidation_tolerance/ 100 )
     max_tolerance = 1 + ( consolidation_tolerance/ 100 )
+
+    src_low_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Low' ] ], unusual_vol_and_upside_idx_df, max_consolidation_range )
+    src_close_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Close' ] ], unusual_vol_and_upside_idx_df, max_consolidation_range )
 
     repeat_src_low_df = pd.DataFrame( np.repeat( src_low_df.values, len( src_low_df ), axis=0 ), columns=src_low_df.columns, index=np.repeat( src_low_df.reset_index().index.tolist(), len( src_low_df ), axis=0 ) ).rename( columns={ 'Low': 'Compare' } )
     expand_src_low_df = pd.concat( [ src_low_df ] * len( src_low_df ) ).rename( columns={ 'Low': 'Compare' } )
@@ -116,27 +125,19 @@ def get_consolidation_df( src_low_df: DataFrame, src_close_df: DataFrame, gap_fi
     repeat_idx_df = pd.concat( [ pd.DataFrame( repeat_src_low_df.index ) ] * len( repeat_src_low_df.columns ), axis=1 )
     repeat_idx_boolean_df = ( ~repeat_idx_df.diff().fillna( 1 ).astype( bool ) )
 
-    low_in_range_boolean_df = None
-    close_in_range_boolean_df = None
     low_in_range_boolean_count_df = None
     close_in_range_boolean_count_df = None
     result_boolean_df = None
 
-    if gap_fill_value_df is not None and not gap_fill_value_df.empty:
-        gap_fill_value_df = ( pd.concat( [ gap_fill_value_df ] * len( repeat_idx_df ) ).set_index( repeat_src_low_df.index ) )
-
-        low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df ) & ( repeat_src_low_df >= gap_fill_value_df )
-        close_in_range_boolean_df = ( repeat_src_close_df >= min_close_df ) & ( repeat_src_close_df <= max_close_df ) & ( repeat_src_low_df >= gap_fill_value_df )
-    else:
-        low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df )
-        close_in_range_boolean_df = ( repeat_src_close_df >= min_close_df ) & ( repeat_src_close_df <= max_close_df )
+    low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df )
+    close_in_range_boolean_df = ( repeat_src_close_df >= min_close_df ) & ( repeat_src_close_df <= max_close_df )
 
     if count_mode == 'CONSECUTIVE':
-        low_in_range_boolean_count_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
-        close_in_range_boolean_count_df = get_consecutive_count_boolean_df( close_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_period )
+        low_in_range_boolean_count_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
+        close_in_range_boolean_count_df = get_consecutive_count_boolean_df( close_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
     elif count_mode == 'SUM':
-        low_in_range_boolean_count_df = low_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_period
-        close_in_range_boolean_count_df = close_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_period
+        low_in_range_boolean_count_df = ( low_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_range )
+        close_in_range_boolean_count_df = ( close_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_range )
     
     if ( 'Low' in consolidation_indicators ) and ( 'Close' in consolidation_indicators ):
         result_boolean_df = ( low_in_range_boolean_count_df ) | ( close_in_range_boolean_count_df )

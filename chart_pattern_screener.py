@@ -16,7 +16,7 @@ def filter_by_unfill_gap_up(
             unusual_gap_up_pct=1, unusual_close_pct=7,
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
-            min_consolidation_day=4, gap_fill_tolerance=None, 
+            min_observe_day=4, gap_fill_tolerance=None, 
             day_period=35, **kwargs ):
     start_time = time.time()
     result_ticker_list = []
@@ -35,19 +35,18 @@ def filter_by_unfill_gap_up(
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
-            min_consolidation_day_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
-            min_consolidation_day_boolean_df = ( min_consolidation_day_df >= min_consolidation_day ).rename( columns={ 'Index': 'Compare' } )
+            min_observe_day_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
+            min_observe_day_boolean_df = ( min_observe_day_df >= min_observe_day ).rename( columns={ 'Index': 'Compare' } )
             
-            gap_fill_value_df = get_single_row_data_result_df_by_row_number( high_df, unusual_vol_and_upside_idx_df.sub( 1 ) )
-            current_low_df = low_df.iloc[ [ -1 ] ].rename( columns={ 'Low': 'Compare' }, index={ low_df.iloc[ [ -1 ] ].index.values[ 0 ]: 0 } )
-            current_low_df.index.name = None
+            gap_fill_value_df = get_data_from_df_by_idx( high_df, unusual_vol_and_upside_idx_df.sub( 1 ) )
+            current_low_df = low_df.iloc[ [ -1 ] ].rename( columns={ 'Low': 'Compare' } ).reset_index( drop=True )
 
             if gap_fill_tolerance != None:
                 min_multiplier = 1 + ( gap_fill_tolerance/ 100 )
                 gap_fill_value_df = gap_fill_value_df.mul( min_multiplier )
 
             fill_gap_range_boolean_df = ( current_low_df >= gap_fill_value_df )
-            result_boolean_df = ( min_consolidation_day_boolean_df ) & ( fill_gap_range_boolean_df )
+            result_boolean_df = ( min_observe_day_boolean_df ) & ( fill_gap_range_boolean_df )
             
             ticker_to_filtered_result_series = result_boolean_df.any()
             ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist()
@@ -65,8 +64,7 @@ def filter_by_consolidation_after_uptrend_momentum(
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='LAST',
             consolidation_tolerance=4, consolidation_indicators=['Low', 'Close'], count_mode='CONSECUTIVE',
-            min_consolidation_day=5,
-            recent_upside_consolidation_day=None,
+            min_consolidation_range=4, max_consolidation_range=13,
             day_period=35, **kwargs ):
     start_time = time.time()
     result_ticker_list = []
@@ -77,31 +75,20 @@ def filter_by_consolidation_after_uptrend_momentum(
 
             historical_data_df = select_data_by_time_period( historical_data_df, day_period )
 
-            close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ]
-            low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
-
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
                                                                                 unusual_gap_up_pct, unusual_close_pct, 
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
-            min_consolidation_day_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
-            min_consolidation_day_boolean_df = ( min_consolidation_day_df >= min_consolidation_day ).rename( columns={ 'Index': 'Compare' } )
-            
-            selected_low_df = select_data_df_from_row_number( low_df, unusual_vol_and_upside_idx_df )
-            selected_close_df = select_data_df_from_row_number( close_df, unusual_vol_and_upside_idx_df )
-            gap_fill_value_df = get_single_row_data_result_df_by_row_number( low_df, unusual_vol_and_upside_idx_df )
-            consolidation_boolean_df = None
+            min_consolidation_range_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
+            min_consolidation_range_boolean_df = ( min_consolidation_range_df >= min_consolidation_range ).rename( columns={ 'Index': 'Compare' } )
 
-            consolidation_boolean_df = get_consolidation_df( selected_low_df,
-                                                            selected_close_df,
-                                                            gap_fill_value_df,
-                                                            consolidation_tolerance,
-                                                            consolidation_indicators,
-                                                            count_mode,
-                                                            min_consolidation_day )
+            consolidation_boolean_df = get_consolidation_df( historical_data_df,
+                                                            unusual_vol_and_upside_idx_df,
+                                                            consolidation_tolerance, consolidation_indicators, count_mode,
+                                                            min_consolidation_range, max_consolidation_range )
 
-            result_boolean_df = ( min_consolidation_day_boolean_df ) & ( consolidation_boolean_df )
+            result_boolean_df = ( min_consolidation_range_boolean_df ) & ( consolidation_boolean_df )
 
             ticker_to_filtered_result_series = result_boolean_df.any()
             ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist()
