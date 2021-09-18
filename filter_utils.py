@@ -1,7 +1,9 @@
-from os import close
-from pandas.core.frame import DataFrame
 import numpy as np
+from numpy import typing
 import pandas as pd
+from pandas.core.frame import DataFrame
+from os import close
+from typing import Union
 
 idx = pd.IndexSlice
 
@@ -60,7 +62,6 @@ def get_upside_change_boolean_df( src_df: DataFrame, gap_up_pct: float, close_pc
 def get_increasing_vol_boolean_df( src_df: DataFrame, increasing_vol_extent: float, vol_val: int, consecutive_day: int ):
     vol_df = src_df.loc[ :, idx[ :, 'Volume' ] ].rename( columns={ 'Volume': 'Increasing Vol' } )
     vol_pct_change_df = src_df.loc[ :, idx[ :, 'Vol Change' ] ].rename( columns={ 'Vol Change': 'Increasing Vol' } )
-    vol_compare_df = None
 
     if vol_val == None:
         vol_compare_df = ( vol_pct_change_df >= increasing_vol_extent ) & ( vol_df >= vol_val )
@@ -100,17 +101,28 @@ def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: Dat
         idx_boolean_df = ( idx_df >= expand_src_start_idx_df )
 
     return src_data_df.where( idx_boolean_df.values )
-
+    
 def get_consolidation_df( 
             historical_data_df: DataFrame,
-            unusual_vol_and_upside_idx_df: DataFrame,
+            start_idx: Union[int, DataFrame],
             consolidation_tolerance: float, consolidation_indicators: list, count_mode: str,
-            min_consolidation_range, max_consolidation_range: int ) -> DataFrame:
+            min_consolidation_range: int, max_consolidation_range: int ) -> DataFrame:
     min_tolerance = 1 - ( consolidation_tolerance/ 100 )
     max_tolerance = 1 + ( consolidation_tolerance/ 100 )
 
-    src_low_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Low' ] ], unusual_vol_and_upside_idx_df, max_consolidation_range )
-    src_close_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Close' ] ], unusual_vol_and_upside_idx_df, max_consolidation_range )
+    if isinstance(start_idx, DataFrame):
+        src_high_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'High' ] ], start_idx, max_consolidation_range )
+        src_low_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Low' ] ], start_idx, max_consolidation_range )
+        src_close_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Close' ] ], start_idx, max_consolidation_range )
+    elif isinstance(start_idx, int):
+        src_high_df = historical_data_df.loc[ :, idx[ :, 'High' ] ]
+        src_low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
+        src_close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ]
+
+    repeat_src_high_df = pd.DataFrame( np.repeat( src_high_df.values, len( src_high_df ), axis=0 ), columns=src_high_df.columns, index=np.repeat( src_high_df.reset_index().index.tolist(), len( src_high_df ), axis=0 ) ).rename( columns={ 'High': 'Compare' } )
+    expand_src_high_df = pd.concat( [ src_high_df ] * len( src_high_df ) ).rename( columns={ 'High': 'Compare' } )
+    min_high_df = expand_src_high_df.mul( min_tolerance ).set_index( repeat_src_high_df.index )
+    max_high_df = expand_src_high_df.mul( max_tolerance ).set_index( repeat_src_high_df.index )
 
     repeat_src_low_df = pd.DataFrame( np.repeat( src_low_df.values, len( src_low_df ), axis=0 ), columns=src_low_df.columns, index=np.repeat( src_low_df.reset_index().index.tolist(), len( src_low_df ), axis=0 ) ).rename( columns={ 'Low': 'Compare' } )
     expand_src_low_df = pd.concat( [ src_low_df ] * len( src_low_df ) ).rename( columns={ 'Low': 'Compare' } )
@@ -125,26 +137,35 @@ def get_consolidation_df(
     repeat_idx_df = pd.concat( [ pd.DataFrame( repeat_src_low_df.index ) ] * len( repeat_src_low_df.columns ), axis=1 )
     repeat_idx_boolean_df = ( ~repeat_idx_df.diff().fillna( 1 ).astype( bool ) )
 
-    low_in_range_boolean_count_df = None
-    close_in_range_boolean_count_df = None
-    result_boolean_df = None
-
+    high_in_range_boolean_df = ( repeat_src_high_df >= min_high_df ) & ( repeat_src_high_df <= max_high_df )
     low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df )
     close_in_range_boolean_df = ( repeat_src_close_df >= min_close_df ) & ( repeat_src_close_df <= max_close_df )
 
     if count_mode == 'CONSECUTIVE':
+        high_in_range_boolean_count_df = get_consecutive_count_boolean_df( high_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
         low_in_range_boolean_count_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
         close_in_range_boolean_count_df = get_consecutive_count_boolean_df( close_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
     elif count_mode == 'SUM':
+        high_in_range_boolean_count_df = ( high_in_range_boolean_df.groupby( high_in_range_boolean_df.index ).sum() >= min_consolidation_range )
         low_in_range_boolean_count_df = ( low_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_range )
         close_in_range_boolean_count_df = ( close_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_range )
     
-    if ( 'Low' in consolidation_indicators ) and ( 'Close' in consolidation_indicators ):
-        result_boolean_df = ( low_in_range_boolean_count_df ) | ( close_in_range_boolean_count_df )
-    elif 'Low' in consolidation_indicators:
-        result_boolean_df = low_in_range_boolean_count_df
-    elif 'Close' in consolidation_indicators:
-        result_boolean_df = close_in_range_boolean_count_df
+    indicator_to_in_range_boolean_df_dict = {
+        'High': high_in_range_boolean_count_df,
+        'Low': low_in_range_boolean_count_df,
+        'Close': close_in_range_boolean_count_df
+    }
+
+    in_range_boolean_df_list = []
+    
+    for indicator in consolidation_indicators:
+        in_range_boolean_df_list.append( indicator_to_in_range_boolean_df_dict[ indicator ] )
+
+    for index, in_range_boolean_df in enumerate(in_range_boolean_df_list):
+        if index == 0:
+            result_boolean_df = in_range_boolean_df
+        else:
+            result_boolean_df = ( result_boolean_df ) | ( in_range_boolean_df )
 
     result_boolean_df = pd.DataFrame( result_boolean_df.any() ).T
     return result_boolean_df

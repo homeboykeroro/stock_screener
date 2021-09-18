@@ -10,8 +10,6 @@ from filter_utils import *
 historical_data_df_list = []
 idx = pd.IndexSlice
 
-#May Add Uptrend Triangle, VCP pattern
-
 def filter_by_unfill_gap_up( 
             unusual_gap_up_pct=1, unusual_close_pct=7,
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
@@ -23,8 +21,6 @@ def filter_by_unfill_gap_up(
 
     try:
         for index, historical_data_df in enumerate( historical_data_df_list ):
-            result_boolean_df = None
-
             historical_data_df = select_data_by_time_period( historical_data_df, day_period )
 
             high_df = historical_data_df.loc[ :, idx[ :, 'High' ] ]
@@ -63,7 +59,7 @@ def filter_by_consolidation_after_uptrend_momentum(
             unusual_gap_up_pct=None, unusual_close_pct=5,
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='LAST',
-            consolidation_tolerance=4, consolidation_indicators=['Low', 'Close'], count_mode='CONSECUTIVE',
+            consolidation_tolerance=4, consolidation_indicators=['Low', 'High', 'Close'], count_mode='CONSECUTIVE',
             min_consolidation_range=4, max_consolidation_range=13,
             day_period=35, **kwargs ):
     start_time = time.time()
@@ -71,8 +67,6 @@ def filter_by_consolidation_after_uptrend_momentum(
 
     try:
         for index, historical_data_df in enumerate( historical_data_df_list ):
-            result_boolean_df = None
-
             historical_data_df = select_data_by_time_period( historical_data_df, day_period )
 
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
@@ -99,7 +93,7 @@ def filter_by_consolidation_after_uptrend_momentum(
         logging.exception( 'Filter By Consolidation After Uptrend Momentum Failed, Cause: %s' % e  )
         raise Exception( 'Filter By Consolidation After Uptrend Momentum Error' )
 
-    return result_ticker_list
+    return result_ticker_list   
 
 def filter_stocks():
     global historical_data_df_list

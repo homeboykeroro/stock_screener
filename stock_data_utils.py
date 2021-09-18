@@ -39,6 +39,12 @@ def clean_folder_contents( folder_dir_list ):
         logging.exception( 'Clean Stock Data Source Folder Failed, Path: %s. Cause: %s' % ( full_dir, e ) )
         raise Exception( 'Clean Stock Data Source Folder Error' )
 
+def clean_log():
+    log_dir = os.path.join( config[ 'STOCK_DATA_ROOT_FOLDER_DIR' ], 'log.txt' )
+
+    with open( log_dir, 'r+' ) as log:
+        log.truncate(0)
+
 def download_ticker_list_from_ftp():
     start_time = time.time()
 

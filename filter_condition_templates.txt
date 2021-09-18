@@ -1,2 +1,3 @@
-[ { "operation": "consolidation_after_uptrend_momentum", "day_period": 30, "consolidation_tolerance": 3.2, "min_consolidation_range": 5, "unusual_vol_val": 500000, "count_mode": "SUM" } ]
-[ { "operation": "unfill_gap_up", "day_period": 60, "unusual_gap_up_pct": 3, "unusual_close_pct": 7 } ]
+
+[ { "operation": "unfill_gap_up", "unusual_gap_up_pct": 1, "unusual_close_pct": 7, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "LAST", "min_observe_day": 4, "gap_fill_tolerance": null, "day_period": 80 } ]
+[ { "operation": "consolidation_after_uptrend_momentum", "unusual_gap_up_pct": null, "unusual_close_pct": 5, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "LAST", "consolidation_tolerance": 4, "consolidation_indicators": ["Low", "High", "Close"], "count_mode": "CONSECUTIVE", "min_consolidation_range": 4, "max_consolidation_range": 13, "day_period": 35 } ]
