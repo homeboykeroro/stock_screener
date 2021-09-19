@@ -1,8 +1,6 @@
 import numpy as np
-from numpy import typing
 import pandas as pd
 from pandas.core.frame import DataFrame
-from os import close
 from typing import Union
 
 idx = pd.IndexSlice
@@ -78,7 +76,7 @@ def get_consecutive_count_boolean_df( src_boolean_df: DataFrame, consecutive_day
     consecutive_pct_change_day_df = src_boolean_df.cumsum() - src_boolean_df.cumsum().where( ~src_boolean_df ).ffill().fillna( 0 )
     consecutive_pct_change_day_sum_df = consecutive_pct_change_day_df.where( src_boolean_df.values ).ffill()
     consecutive_pct_change_day_sum_df = ( consecutive_pct_change_day_sum_df.where( ~src_boolean_df.values ).bfill() ).where( src_boolean_df.values )
-    
+
     return ( consecutive_pct_change_day_sum_df >= consecutive_day )
 
 def get_data_from_df_by_idx( src_data_df: DataFrame, src_idx_df: DataFrame ) -> DataFrame:
@@ -110,11 +108,11 @@ def get_consolidation_df(
     min_tolerance = 1 - ( consolidation_tolerance/ 100 )
     max_tolerance = 1 + ( consolidation_tolerance/ 100 )
 
-    if isinstance(start_idx, DataFrame):
+    if isinstance( start_idx, DataFrame ):
         src_high_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'High' ] ], start_idx, max_consolidation_range )
         src_low_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Low' ] ], start_idx, max_consolidation_range )
         src_close_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Close' ] ], start_idx, max_consolidation_range )
-    elif isinstance(start_idx, int):
+    else:
         src_high_df = historical_data_df.loc[ :, idx[ :, 'High' ] ]
         src_low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
         src_close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ]
@@ -140,7 +138,7 @@ def get_consolidation_df(
     high_in_range_boolean_df = ( repeat_src_high_df >= min_high_df ) & ( repeat_src_high_df <= max_high_df )
     low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df )
     close_in_range_boolean_df = ( repeat_src_close_df >= min_close_df ) & ( repeat_src_close_df <= max_close_df )
-
+    
     if count_mode == 'CONSECUTIVE':
         high_in_range_boolean_count_df = get_consecutive_count_boolean_df( high_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
         low_in_range_boolean_count_df = get_consecutive_count_boolean_df( low_in_range_boolean_df.where( repeat_idx_boolean_df.values ).fillna( False ), min_consolidation_range )
@@ -148,8 +146,8 @@ def get_consolidation_df(
     elif count_mode == 'SUM':
         high_in_range_boolean_count_df = ( high_in_range_boolean_df.groupby( high_in_range_boolean_df.index ).sum() >= min_consolidation_range )
         low_in_range_boolean_count_df = ( low_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_range )
-        close_in_range_boolean_count_df = ( close_in_range_boolean_df.groupby( low_in_range_boolean_df.index ).sum() >= min_consolidation_range )
-    
+        close_in_range_boolean_count_df = ( close_in_range_boolean_df.groupby( close_in_range_boolean_df.index ).sum() >= min_consolidation_range )
+
     indicator_to_in_range_boolean_df_dict = {
         'High': high_in_range_boolean_count_df,
         'Low': low_in_range_boolean_count_df,
@@ -161,7 +159,7 @@ def get_consolidation_df(
     for indicator in consolidation_indicators:
         in_range_boolean_df_list.append( indicator_to_in_range_boolean_df_dict[ indicator ] )
 
-    for index, in_range_boolean_df in enumerate(in_range_boolean_df_list):
+    for index, in_range_boolean_df in enumerate( in_range_boolean_df_list ):
         if index == 0:
             result_boolean_df = in_range_boolean_df
         else:

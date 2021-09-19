@@ -10,7 +10,7 @@ from filter_utils import *
 historical_data_df_list = []
 idx = pd.IndexSlice
 
-def filter_by_unfill_gap_up( 
+def filter_by_unfilled_gap_up( 
             unusual_gap_up_pct=1, unusual_close_pct=7,
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
@@ -41,8 +41,8 @@ def filter_by_unfill_gap_up(
                 min_multiplier = 1 + ( gap_fill_tolerance/ 100 )
                 gap_fill_value_df = gap_fill_value_df.mul( min_multiplier )
 
-            fill_gap_range_boolean_df = ( current_low_df >= gap_fill_value_df )
-            result_boolean_df = ( min_observe_day_boolean_df ) & ( fill_gap_range_boolean_df )
+            filled_gap_range_boolean_df = ( current_low_df >= gap_fill_value_df )
+            result_boolean_df = ( min_observe_day_boolean_df ) & ( filled_gap_range_boolean_df )
             
             ticker_to_filtered_result_series = result_boolean_df.any()
             ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist()
@@ -93,7 +93,7 @@ def filter_by_consolidation_after_uptrend_momentum(
         logging.exception( 'Filter By Consolidation After Uptrend Momentum Failed, Cause: %s' % e  )
         raise Exception( 'Filter By Consolidation After Uptrend Momentum Error' )
 
-    return result_ticker_list   
+    return result_ticker_list
 
 def filter_stocks():
     global historical_data_df_list
@@ -108,7 +108,7 @@ def filter_stocks():
             filtered_ticker_list = []
 
             operation_dict = {
-                'unfill_gap_up': filter_by_unfill_gap_up,
+                'unfilled_gap_up': filter_by_unfilled_gap_up,
                 'consolidation_after_uptrend_momentum': filter_by_consolidation_after_uptrend_momentum
             }
 
