@@ -13,11 +13,11 @@ def select_data_by_time_period( src_df: DataFrame, day_period: int ) -> DataFram
 
 def get_unusual_vol_and_upside_idx_df( 
             historical_data_df: DataFrame,
-            unusual_gap_up_pct: float, unusual_close_pct: float, 
+            candle_property_list, 
             compare_unusual_vol_ma: int, unusual_vol_extent: float, unusual_vol_val: int,
             unusual_vol_and_upside_occurrence: str ) -> DataFrame:
     unusual_vol_boolean_df = get_unusual_vol_boolean_df( historical_data_df, compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val ).rename( columns={ 'Unusual Vol': 'Compare' } )
-    upside_change_boolean_df = get_upside_change_boolean_df( historical_data_df, unusual_gap_up_pct, unusual_close_pct ).rename( columns={ 'Up': 'Compare' } )
+    upside_change_boolean_df = get_upside_change_boolean_df( historical_data_df, candle_property_list ).rename( columns={ 'Up': 'Compare' } )
     unusual_vol_and_upside_change_boolean_df = ( upside_change_boolean_df ) & ( unusual_vol_boolean_df )
     
     idx_df = derive_idx_df_from_src_df( historical_data_df.loc[ :, idx[ :, 'Close' ] ] )
@@ -29,6 +29,58 @@ def get_unusual_vol_and_upside_idx_df(
 
     return unusual_vol_and_upside_idx_df.rename( index={ unusual_vol_and_upside_idx_df.index.values[ 0 ]: 0 } )
 
+def get_candle_type_boolean_df( 
+            src_df: DataFrame, 
+            candle_type: str, candle_body_color: str,
+            higher_high_pct: float,
+            close_pct: float, 
+            gap_up_pct: float,
+            shadow_to_candle_ratio: float,
+            marubozu_ratio: float ) -> DataFrame:
+    open_df = src_df.loc[ :, idx[ :, 'Open' ] ].rename( columns={ 'Open': 'Compare' } )
+    high_df = src_df.loc[ :, idx[ :, 'High' ] ].rename( columns={ 'High': 'Compare' } )
+    low_df = src_df.loc[ :, idx[ :, 'Low' ] ].rename( columns={ 'Low': 'Compare' } )
+    close_df = src_df.loc[ :, idx[ :, 'Close' ] ].rename( columns={ 'Close': 'Compare' } )
+
+    high_pct_change_df = src_df.loc[ :, idx[ :, 'High Change' ] ].rename( columns={ 'High Change': 'Compare' } )
+    close_pct_change_df = src_df.loc[ :, idx[ :, 'Close Change' ] ].rename( columns={ 'Close Change': 'Compare' } )
+    
+    upper_body_df = src_df.loc[ :, idx[ :, 'Upper Body' ] ].rename( columns={ 'Upper Body': 'Compare' } )
+    lower_body_df = src_df.loc[ :, idx[ :, 'Lower Body' ] ].rename( columns={ 'Lower Body': 'Compare' } )
+    
+    green_boolean_df = ( close_df > open_df )
+    high_low_diff_df = high_df.sub( low_df.values )
+
+    if candle_type == 'LONG_UPPER_SHADOW':
+        upper_shadow_to_candle_upper_body_ratio_df = ( ( high_df.sub( upper_body_df.values ).replace( 0, np.nan ) ).div( high_low_diff_df.values ) ).mul( 100 )
+        result_boolean_df = ( upper_shadow_to_candle_upper_body_ratio_df >= shadow_to_candle_ratio )
+    elif candle_type == 'LONG_LOWER_SHADOW':
+        candle_lower_body_to_lower_shadow_ratio_df = ( ( lower_body_df.sub( low_df.values ).replace( 0, np.nan ) ).div( high_low_diff_df.values ) ).mul( 100 )
+        result_boolean_df = ( candle_lower_body_to_lower_shadow_ratio_df >= shadow_to_candle_ratio )
+    elif candle_type == 'MARUBOZU':
+        body_diff_df = upper_body_df.sub( lower_body_df.values ).replace( 0, np.nan )
+        marubozu_ratio_df = ( body_diff_df.div( high_low_diff_df.values ) ).mul( 100 )
+        result_boolean_df = ( marubozu_ratio_df >= marubozu_ratio )
+
+    if candle_body_color == 'GREEN':
+        result_boolean_df = ( result_boolean_df ) & ( green_boolean_df )
+    elif candle_body_color == 'RED':
+        result_boolean_df = ( result_boolean_df ) & ( ~green_boolean_df )
+
+    if gap_up_pct != None:
+        gap_up_diff_ref_df = upper_body_df.shift()
+        gap_up_diff_pct_df = ( ( low_df.sub( gap_up_diff_ref_df.values ).replace( 0, np.nan ) ).div( gap_up_diff_ref_df.values ) ).mul( 100 )
+        
+        result_boolean_df = ( result_boolean_df ) & ( gap_up_diff_pct_df >= gap_up_pct )
+    
+    if close_pct != None:
+        result_boolean_df = ( result_boolean_df ) & ( close_pct_change_df >= close_pct )
+
+    if higher_high_pct != None and higher_high_pct != 0:
+        result_boolean_df = ( result_boolean_df ) & ( high_pct_change_df >= higher_high_pct )
+    
+    return result_boolean_df.rename( columns={ 'Compare': 'Candle' } )
+        
 def get_unusual_vol_boolean_df( src_df: DataFrame, vol_ma: int, vol_extent: float, vol_val: int ) -> DataFrame:
     vol_df = src_df.loc[ :, idx[ :, 'Volume' ] ]
     vol_ma_df = src_df.loc[ :, idx[ :, ( str( vol_ma ) + 'MA Vol' ) ] ]
@@ -43,19 +95,25 @@ def get_unusual_vol_boolean_df( src_df: DataFrame, vol_ma: int, vol_extent: floa
     else:
         return unusual_vol_boolean_df.rename( columns={ 'Volume': 'Unusual Vol' } )
 
-def get_upside_change_boolean_df( src_df: DataFrame, gap_up_pct: float, close_pct: float ) -> DataFrame:
-    gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Gap Diff' ] ]
-    close_pct_change_df = src_df.loc[ :, idx[ :, 'Pct Change' ] ]
+def get_upside_change_boolean_df( 
+            src_df: DataFrame,
+            candle_property_list: list ) -> DataFrame:
+    for index, candle_property in enumerate( candle_property_list ):
+        candle_boolean_df = get_candle_type_boolean_df( src_df, 
+                                        candle_property[ 'type' ],
+                                        candle_property.get( 'color', None ),
+                                        candle_property.get( 'higherHighPct', None ),
+                                        candle_property.get( 'closePct', None ),
+                                        candle_property.get( 'gapUpPct', None ),
+                                        candle_property.get( 'shadowCandleRatio', None ),
+                                        candle_property.get( 'marubozuRatio', None ) )
+        
+        if index == 0:
+            result_boolean_df = candle_boolean_df
+        else:
+            result_boolean_df = ( result_boolean_df ) | ( candle_boolean_df )
 
-    gap_diff_boolean_df = ( gap_up_pct_change_df > gap_up_pct ).rename( columns={ 'Gap Diff': 'Up' } )
-    close_pct_change_boolean_df = ( close_pct_change_df >= close_pct ).rename( columns={ 'Pct Change': 'Up' } )
-
-    if gap_up_pct != None and close_pct != None:
-        return ( gap_diff_boolean_df ) & ( close_pct_change_boolean_df )
-    elif gap_up_pct != None and close_pct == None:
-        return gap_diff_boolean_df
-    elif gap_up_pct == None and close_pct != None:
-        return close_pct_change_boolean_df
+    return result_boolean_df.rename( columns={ 'Candle': 'Up' } )
 
 def get_increasing_vol_boolean_df( src_df: DataFrame, increasing_vol_extent: float, vol_val: int, consecutive_day: int ):
     vol_df = src_df.loc[ :, idx[ :, 'Volume' ] ].rename( columns={ 'Volume': 'Increasing Vol' } )
@@ -103,7 +161,7 @@ def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: Dat
 def get_consolidation_df( 
             historical_data_df: DataFrame,
             start_idx: Union[int, DataFrame],
-            consolidation_tolerance: float, consolidation_indicators: list, count_mode: str,
+            consolidation_tolerance: float, consolidation_indicators: list, consolidation_indicators_compare: str, count_mode: str,
             min_consolidation_range: int, max_consolidation_range: int ) -> DataFrame:
     min_tolerance = 1 - ( consolidation_tolerance/ 100 )
     max_tolerance = 1 + ( consolidation_tolerance/ 100 )
@@ -163,7 +221,10 @@ def get_consolidation_df(
         if index == 0:
             result_boolean_df = in_range_boolean_df
         else:
-            result_boolean_df = ( result_boolean_df ) | ( in_range_boolean_df )
+            if consolidation_indicators_compare == 'OR':
+                result_boolean_df = ( result_boolean_df ) | ( in_range_boolean_df )
+            elif consolidation_indicators_compare == 'AND':
+                result_boolean_df = ( result_boolean_df ) & ( in_range_boolean_df )
 
     result_boolean_df = pd.DataFrame( result_boolean_df.any() ).T
     return result_boolean_df

@@ -1,1 +1,1 @@
-Nasdaq Ticker List Size: 3468 Other Tickers List Size: 3024 Complete Ticker List Size: 6492 
+Nasdaq Ticker List Size: 3484 Other Tickers List Size: 3027 Complete Ticker List Size: 6511 

@@ -11,7 +11,8 @@ historical_data_df_list = []
 idx = pd.IndexSlice
 
 def filter_by_unfilled_gap_up( 
-            unusual_gap_up_pct=1, unusual_close_pct=7,
+            candle_property_list=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandleRatio': 58, 'gapUpPct': 1 }, 
+                                    { 'type': 'MARUBOZU', 'color': 'RED', 'marubozu_ratio': 58, 'higherHighPct': 1 } ],
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
             min_observe_day=4, gap_fill_tolerance=None, 
@@ -27,7 +28,7 @@ def filter_by_unfilled_gap_up(
             low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
 
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
-                                                                                unusual_gap_up_pct, unusual_close_pct, 
+                                                                                candle_property_list, 
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
@@ -55,11 +56,13 @@ def filter_by_unfilled_gap_up(
 
     return result_ticker_list
 
-def filter_by_consolidation_after_uptrend_momentum( 
-            unusual_gap_up_pct=None, unusual_close_pct=5,
+def filter_by_consolidation_after_momentum( 
+            candle_property_list=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandleRatio': 58, 'gapUpPct': 1 }, 
+                                    { 'type': 'MARUBOZU', 'color': 'RED', 'marubozu_ratio': 58, 'higherHighPct': 1 } ],
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='LAST',
-            consolidation_tolerance=4, consolidation_indicators=['Low', 'High', 'Close'], count_mode='CONSECUTIVE',
+            consolidation_tolerance=4, consolidation_indicators=[ 'Low', 'High', 'Close' ], 
+            consolidation_indicators_compare='AND', count_mode='CONSECUTIVE',
             min_consolidation_range=4, max_consolidation_range=13,
             day_period=35, **kwargs ):
     start_time = time.time()
@@ -70,16 +73,17 @@ def filter_by_consolidation_after_uptrend_momentum(
             historical_data_df = select_data_by_time_period( historical_data_df, day_period )
 
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
-                                                                                unusual_gap_up_pct, unusual_close_pct, 
+                                                                                candle_property_list, 
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
             min_consolidation_range_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
             min_consolidation_range_boolean_df = ( min_consolidation_range_df >= min_consolidation_range ).rename( columns={ 'Index': 'Compare' } )
-
+            
             consolidation_boolean_df = get_consolidation_df( historical_data_df,
                                                             unusual_vol_and_upside_idx_df,
-                                                            consolidation_tolerance, consolidation_indicators, count_mode,
+                                                            consolidation_tolerance, consolidation_indicators, 
+                                                            consolidation_indicators_compare, count_mode,
                                                             min_consolidation_range, max_consolidation_range )
 
             result_boolean_df = ( min_consolidation_range_boolean_df ) & ( consolidation_boolean_df )
@@ -109,7 +113,7 @@ def filter_stocks():
 
             operation_dict = {
                 'unfilled_gap_up': filter_by_unfilled_gap_up,
-                'consolidation_after_uptrend_momentum': filter_by_consolidation_after_uptrend_momentum
+                'consolidation_after_uptrend_momentum': filter_by_consolidation_after_momentum,
             }
 
             for filter_condition_dict in filter_condition_dict_list:

@@ -196,19 +196,32 @@ def append_custom_statistics():
         for index, historical_data_df in enumerate( historical_data_df_list ):
             append_start_time = time.time()
             
-            #Daily Price Change
-            pct_change_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ].pct_change().mul( 100 ).rename( columns={ 'Close':'Pct Change' } )
-            result_df = pd.concat( [ historical_data_df, pct_change_df ], axis=1 )  
-            
-            #Gap Diff
-            shifted_high_df = historical_data_df.loc[ :, idx[ :, 'High' ] ].shift()
-            low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
-            gap_diff_df = ( ( low_df.sub( shifted_high_df.values ) ).div( shifted_high_df.values ) ).mul( 100 ).rename( columns={ 'Low':'Gap Diff' } )
-            result_df = pd.concat( [ result_df, gap_diff_df ], axis=1 ) 
+            #Close Change
+            close_change_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ].pct_change().mul( 100 ).rename( columns={ 'Close':'Close Change' } )
+            result_df = pd.concat( [ historical_data_df, close_change_df ], axis=1 )
+
+            #High Change
+            high_change_df = historical_data_df.loc[ :, idx[ :, 'High' ] ].pct_change().mul( 100 ).rename( columns={ 'High':'High Change' } )
+            result_df = pd.concat( [ result_df, high_change_df ], axis=1 )
+
+            #Candle Upper/ Lower Body
+            open_df = historical_data_df.loc[ :, idx[ :, 'Open' ] ].rename( columns={ 'Open': 'Compare' } )
+            close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ].rename( columns={ 'Close': 'Compare' } )
+
+            close_above_open_boolean_df = ( close_df > open_df )
+            close_above_open_df = close_df.where( close_above_open_boolean_df.values )
+            open_above_close_df = open_df.where( ( ~close_above_open_boolean_df ).values )
+            upper_body_df = close_above_open_df.fillna( open_above_close_df ).rename( columns={ 'Compare': 'Upper Body' } )
+            result_df = pd.concat( [ result_df, upper_body_df ], axis=1 )
+
+            open_below_close_df = open_df.where( close_above_open_boolean_df.values )
+            close_below_open_df = close_df.where( ( ~close_above_open_boolean_df ).values )
+            lower_body_df = open_below_close_df.fillna( close_below_open_df ).rename( columns={ 'Compare': 'Lower Body' } )
+            result_df = pd.concat( [ result_df, lower_body_df ], axis=1 )
 
             #Volume Change
             vol_change_df = historical_data_df.loc[ :, idx[ :, 'Volume' ] ].pct_change().mul( 100 ).rename( columns={ 'Volume':'Vol Change' } )
-            result_df = pd.concat( [ result_df, vol_change_df ], axis=1 ) 
+            result_df = pd.concat( [ result_df, vol_change_df ], axis=1 )
 
             #Closing Price Moving Average
             sma_5_close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ].rolling( window=5 ).mean().rename( columns={ 'Close':'5MA Close' } )
@@ -230,13 +243,13 @@ def append_custom_statistics():
             sma_50_volume_df = historical_data_df.loc[ :, idx[ :, 'Volume' ] ].rolling( window=50 ).mean().rename( columns={ 'Volume':'50MA Vol' } )
             result_df = pd.concat( [ result_df, sma_50_volume_df ], axis=1 )
 
-            #Difference Between Different Moving Average
+            '''#Difference Between Different Moving Average
             diff_5_sma_and_20_sma_close = ( ( result_df.loc[ :, idx[ :, '5MA Close' ] ].sub( result_df.loc[ :, idx[ :, '20MA Close' ] ].values, axis=1 ) ).div( result_df.loc[ :, idx[ :, '20MA Close' ] ].values, axis=1 ) ).mul( 100 ).rename( columns={ '5MA Close':'5MA/20MA Diff' } )
             result_df = pd.concat( [ result_df, diff_5_sma_and_20_sma_close ], axis=1 )
             diff_20_sma_50_sma_close = ( ( result_df.loc[ :, idx[ :, '20MA Close' ] ].sub( result_df.loc[ :, idx[ :, '50MA Close' ] ].values, axis=1 ) ).div( result_df.loc[ :, idx[ :, '50MA Close' ] ].values, axis=1 ) ).mul( 100 ).rename( columns={ '20MA Close':'20MA/50MA Diff' } )
             result_df = pd.concat( [ result_df, diff_20_sma_50_sma_close ], axis=1 )
             diff_150_sma_50_sma_close = ( ( result_df.loc[ :, idx[ :, '50MA Close' ] ].sub( result_df.loc[ :, idx[ :, '150MA Close' ] ].values, axis=1 ) ).div( result_df.loc[ :, idx[ :, '150MA Close' ] ].values, axis=1 ) ).mul( 100 ).rename( columns={ '50MA Close':'50MA/150MA Diff' } )
-            result_df = pd.concat( [ result_df, diff_150_sma_50_sma_close ], axis=1 )
+            result_df = pd.concat( [ result_df, diff_150_sma_50_sma_close ], axis=1 )'''
 
             '''#MACD
             ema_12_close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ].ewm( span=12, adjust=False ).mean()
