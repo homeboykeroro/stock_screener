@@ -4,14 +4,14 @@ import time
 import os
 import json
 
-from stock_data_utils import *
-from filter_utils import *
+from utils.stock_data_utils import *
+from utils.filter_utils import *
 
 historical_data_df_list = []
 idx = pd.IndexSlice
 
 def filter_by_unfilled_gap_up( 
-            candle_property_list=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandleRatio': 58, 'gapUpPct': 1 }, 
+            unusual_upside_indicators=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandlestickRatio': 58, 'gapUpPct': 1 }, 
                                     { 'type': 'MARUBOZU', 'color': 'RED', 'marubozu_ratio': 58, 'higherHighPct': 1 } ],
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
@@ -28,7 +28,7 @@ def filter_by_unfilled_gap_up(
             low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
 
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
-                                                                                candle_property_list, 
+                                                                                unusual_upside_indicators, 
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
@@ -46,10 +46,9 @@ def filter_by_unfilled_gap_up(
             result_boolean_df = ( min_observe_day_boolean_df ) & ( filled_gap_range_boolean_df )
             
             ticker_to_filtered_result_series = result_boolean_df.any()
-            ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist()
             result_ticker_list.extend( ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist() )
 
-        print( "--- Filter By Unfill Gap Pattern Time, %s seconds ---" % ( time.time() - start_time ) )
+        log_msg( "--- Filter By Unfill Gap Pattern Time, %s seconds ---" % ( time.time() - start_time ) )
     except Exception as e:
         logging.exception( 'Filter By Unfill Gap Pattern Failed, Cause: %s' % e )
         raise Exception( 'Filter By Unfill Gap Pattern Error' )
@@ -57,7 +56,7 @@ def filter_by_unfilled_gap_up(
     return result_ticker_list
 
 def filter_by_consolidation_after_momentum( 
-            candle_property_list=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandleRatio': 58, 'gapUpPct': 1 }, 
+            unusual_upside_indicators=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandlestickRatio': 58, 'gapUpPct': 1 }, 
                                     { 'type': 'MARUBOZU', 'color': 'RED', 'marubozu_ratio': 58, 'higherHighPct': 1 } ],
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='LAST',
@@ -73,7 +72,7 @@ def filter_by_consolidation_after_momentum(
             historical_data_df = select_data_by_time_period( historical_data_df, day_period )
 
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
-                                                                                candle_property_list, 
+                                                                                unusual_upside_indicators, 
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
@@ -89,10 +88,9 @@ def filter_by_consolidation_after_momentum(
             result_boolean_df = ( min_consolidation_range_boolean_df ) & ( consolidation_boolean_df )
 
             ticker_to_filtered_result_series = result_boolean_df.any()
-            ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist()
             result_ticker_list.extend( ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist() )
 
-        print( 'Filter By Consolidation After Uptrend Momentum, %s seconds' % ( time.time() - start_time ) )
+        log_msg( '"--- Filter By Consolidation After Uptrend Momentum, %s seconds "---' % ( time.time() - start_time ) )
     except Exception as e:
         logging.exception( 'Filter By Consolidation After Uptrend Momentum Failed, Cause: %s' % e  )
         raise Exception( 'Filter By Consolidation After Uptrend Momentum Error' )
@@ -122,6 +120,6 @@ def filter_stocks():
             result = set( filtered_ticker_list[ 0 ] ).intersection( *filtered_ticker_list[ 1: ] )
             get_stock_chart_by_ticker_list( result, filter_condition_dict_list )
         except Exception as e:
-            print( 'Get Filter Result Failed, Cause: %s' % e )
+            logging.exception( 'Get Filter Result Failed, Cause: %s' % e )
 
 filter_stocks()
