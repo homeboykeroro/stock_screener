@@ -100,7 +100,12 @@ def filter_by_consolidation_after_momentum(
 def filter_stocks():
     global historical_data_df_list
     root_dir = config[ 'STOCK_DATA_ROOT_FOLDER_DIR' ]
-    historical_data_folder_dir = os.path.join( root_dir, 'Historical/Customised/' )
+
+    if DataSourceType.STOOQ.name == historical_data_source_type:
+        historical_data_folder_dir = os.path.join( root_dir, 'Historical/Stooq/Full/' )
+    elif DataSourceType.YFINANCE.name == historical_data_source_type:
+        historical_data_folder_dir = os.path.join( root_dir, 'Historical/Yfinance/Full/' )
+
     historical_data_df_list = load_src_data_dataframe( [ historical_data_folder_dir ] )
 
     while True:

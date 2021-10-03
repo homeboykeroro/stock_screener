@@ -440,9 +440,9 @@ def append_custom_indicators( src_data_dataframe_list: list ):
             log_msg( 'Chunk %s Append Custom Statistics Time, %s seconds' % ( ( index + 1 ), ( time.time() - append_start_time ) ) )
 
             if DataSourceType.STOOQ.name == historical_data_source_type:
-                export_dir = os.path.join( root_dir, ( 'Historical/Yfinance/Full/full_historical_data_chunk_' + str( index + 1 ) + '.csv' ) )
-            elif DataSourceType.YFINANCE.name == historical_data_source_type:
                 export_dir = os.path.join( root_dir, ( 'Historical/Stooq/Full/full_historical_data_chunk_' + str( index + 1 ) + '.csv' ) )
+            elif DataSourceType.YFINANCE.name == historical_data_source_type:
+                export_dir = os.path.join( root_dir, ( 'Historical/Yfinance/Full/full_historical_data_chunk_' + str( index + 1 ) + '.csv' ) )
             result_df.to_csv( export_dir )
 
         log_msg( 'Append and Export Time, %s seconds' % ( time.time() - start_time ) )
