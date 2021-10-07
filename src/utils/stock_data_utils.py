@@ -35,17 +35,18 @@ def initialise_historical_data_directory():
 
     try:
         for stock_src_folder_content in os.listdir( root_dir ):
-           if stock_src_folder_content == 'log.txt' or stock_src_folder_content == 'statistics.txt':
-               continue
+            if stock_src_folder_content == 'log.txt' or stock_src_folder_content == 'statistics.txt' or stock_src_folder_content == 'data':
+                continue
 
-           full_dir = root_dir + stock_src_folder_content
-           if os.path.isfile( full_dir ):
-               os.unlink( full_dir )
-               log_msg( 'Delete Directory: %s' % full_dir )
-        
+            full_dir = root_dir + stock_src_folder_content
+            if os.path.isfile( full_dir ):
+                os.unlink( full_dir )
+                log_msg( 'Delete Directory: %s' % full_dir )
+
         for folder_dir in folder_dir_list:
             if not os.path.exists( folder_dir ):
                 os.makedirs( folder_dir )
+                log_msg( 'Create Directory: %s' % folder_dir )
             else:
                 for content_dir in os.listdir( folder_dir ):
                     full_dir = folder_dir + '/' + content_dir
@@ -158,18 +159,21 @@ def extract_historical_data_from_stooq_files():
 
     try:
         #Get Common Stock File List for All Exchange( NASDAQ, NYSE, AMEX )
-        src_nasdaq_stock_historical_file_list = glob.glob( os.path.join( root_dir, 'Historical/Stooq/data/**/nasdaq stocks/**/*.txt' ), recursive=True )
-        src_nyse_stock_historical_file_list = glob.glob( os.path.join( root_dir, 'Historical/Stooq/data/**/nyse stocks/**/*.txt' ), recursive=True )
-        src_amex_stock_historical_file_list = glob.glob( os.path.join( root_dir, 'Historical/Stooq/data/**/nysemkt stocks/**/*.txt' ), recursive=True )
+        src_nasdaq_stock_historical_file_list = glob.glob( os.path.join( root_dir, 'data/**/nasdaq stocks/**/*.txt' ), recursive=True )
+        src_nyse_stock_historical_file_list = glob.glob( os.path.join( root_dir, 'data/**/nyse stocks/**/*.txt' ), recursive=True )
+        src_amex_stock_historical_file_list = glob.glob( os.path.join( root_dir, 'data/**/nysemkt stocks/**/*.txt' ), recursive=True )
+
+        if len ( src_nasdaq_stock_historical_file_list ) == 0 and len( src_nyse_stock_historical_file_list ) == 0 and len( src_amex_stock_historical_file_list ) == 0:
+            raise Exception( "Stooq Historical Data Files Not Found" )
 
         nasdaq_common_stock_historical_file_list = [ src_historical_file for src_historical_file in src_nasdaq_stock_historical_file_list if len( Path( src_historical_file ).stem.split( '.' )[ 0 ] ) <= 4 and Path( src_historical_file ).stem.split( '.' )[ 0 ].isalpha() and os.stat( src_historical_file ).st_size > 0 ]
         nyse_common_stock_historical_file_list = [ src_historical_file for src_historical_file in src_nyse_stock_historical_file_list if len( Path( src_historical_file ).stem.split( '.' )[ 0 ] ) <= 4 and Path( src_historical_file ).stem.split( '.' )[ 0 ].isalpha() and os.stat( src_historical_file ).st_size > 0 ]
         amex_common_stock_historical_file_list = [ src_historical_file for src_historical_file in src_amex_stock_historical_file_list if len( Path( src_historical_file ).stem.split( '.' )[ 0 ] ) <= 4 and Path( src_historical_file ).stem.split( '.' )[ 0 ].isalpha() and os.stat( src_historical_file ).st_size > 0 ]
 
         #Get ETF File List for All Exchange( NASDAQ, NYSE, AMEX )
-        src_nasdaq_etf_historical_file_list = glob.glob( os.path.join( root_dir, 'Historical/Stooq/data/**/nasdaq etfs/**/*.txt' ), recursive=True )
-        src_nyse_etf_historical_file_list = glob.glob( os.path.join( root_dir, 'Historical/Stooq/data/**/nyse etfs/**/*.txt' ), recursive=True )
-        src_amex_etf_historical_file_list = glob.glob( os.path.join( root_dir, 'Historical/Stooq/data/**/nysemkt etfs/**/*.txt' ), recursive=True )
+        src_nasdaq_etf_historical_file_list = glob.glob( os.path.join( root_dir, 'data/**/nasdaq etfs/**/*.txt' ), recursive=True )
+        src_nyse_etf_historical_file_list = glob.glob( os.path.join( root_dir, 'data/**/nyse etfs/**/*.txt' ), recursive=True )
+        src_amex_etf_historical_file_list = glob.glob( os.path.join( root_dir, 'data/**/nysemkt etfs/**/*.txt' ), recursive=True )
 
         nasdaq_etf_historical_file_list = [ src_historical_file for src_historical_file in src_nasdaq_etf_historical_file_list if len( Path( src_historical_file ).stem.split( '.' )[ 0 ] ) <= 4 and Path( src_historical_file ).stem.split( '.' )[ 0 ].isalpha() and os.stat( src_historical_file ).st_size > 0 ]
         nyse_etf_historical_file_list = [ src_historical_file for src_historical_file in src_nyse_etf_historical_file_list if len( Path( src_historical_file ).stem.split( '.' )[ 0 ] ) <= 4 and Path( src_historical_file ).stem.split( '.' )[ 0 ].isalpha() and os.stat( src_historical_file ).st_size > 0 ]
@@ -199,6 +203,8 @@ def extract_historical_data_from_stooq_files():
         renamed_ohlcv_column_list = [ 'Open', 'High', 'Low', 'Close', 'Volume' ]
         src_historical_data_column_list = [ '<TICKER>', '<DATE>', '<OPEN>', '<HIGH>', '<LOW>', '<CLOSE>', '<VOL>' ]
         renamed_src_historical_data_column_list = [ 'Ticker', 'Date' ] + renamed_ohlcv_column_list
+
+        print( 'Start Extracting Stooq Historical Data...' )
 
         for nasdaq_common_stock_historical_file_chunk_no, nasdaq_common_stock_historical_file_chunk in enumerate( nasdaq_common_stock_historical_file_chunk_list ):
             chunk_export_start_time = time.time()

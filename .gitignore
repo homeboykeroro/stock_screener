@@ -1,6 +1,7 @@
 /screener-venv/
 Data/Historical/**/*.csv
-Data/Historical/**/*.txt
+Data/data/**/*.txt
 Data/Charts/**/*.html
+Data/**/*.zip
 .vscode
 __pycache__

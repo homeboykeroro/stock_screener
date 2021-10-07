@@ -32,7 +32,7 @@ def filter_by_unfilled_gap_up(
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
-            min_observe_day_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
+            min_observe_day_df = unusual_vol_and_upside_idx_df.sub( 1 ).apply( lambda x : day_period - x )
             min_observe_day_boolean_df = ( min_observe_day_df >= min_observe_day ).rename( columns={ 'Index': 'Compare' } )
             
             gap_fill_value_df = get_data_from_df_by_idx( high_df, unusual_vol_and_upside_idx_df.sub( 1 ) )
@@ -76,7 +76,7 @@ def filter_by_consolidation_after_momentum(
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
                                                                                 unusual_vol_and_upside_occurrence )
 
-            min_consolidation_range_df = unusual_vol_and_upside_idx_df.apply( lambda x : day_period - x )
+            min_consolidation_range_df = unusual_vol_and_upside_idx_df.sub( 1 ).apply( lambda x : day_period - x )
             min_consolidation_range_boolean_df = ( min_consolidation_range_df >= min_consolidation_range ).rename( columns={ 'Index': 'Compare' } )
             
             consolidation_boolean_df = get_consolidation_df( historical_data_df,
