@@ -286,8 +286,8 @@ def download_historical_data_from_yfinance( exchange: str ) -> dict:
     nasdaq_ticker_chunks = ticker_info_map[ 'nasdaq_ticker_chunks' ]
     other_ticker_chunks = ticker_info_map[ 'other_ticker_chunks' ]
 
-    nasdaq_historical_data_folder_dir = os.path.join( root_dir, 'Historical/Nasdaq/' )
-    other_historical_data_folder_dir = os.path.join( root_dir, 'Historical/Others/' )
+    nasdaq_historical_data_folder_dir = os.path.join( root_dir, 'Historical/Yfinance/Nasdaq/' )
+    other_historical_data_folder_dir = os.path.join( root_dir, 'Historical/Yfinance/Others/' )
     multi_thread = True
 
     try:

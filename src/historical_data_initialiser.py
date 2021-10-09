@@ -11,6 +11,7 @@ def init():
     initialise_historical_data_directory()
     download_ticker_list_from_ftp()
 
+    #Yfinance Data Source is Deprecated Due to Inaccurate Data and Unstable Download
     if DataSourceType.YFINANCE.name == historical_data_source_type:
         download_historical_data_from_yfinance( exchange='NQ' )
         download_historical_data_from_yfinance( exchange='OTHER' )

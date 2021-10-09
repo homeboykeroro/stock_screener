@@ -1006,7 +1006,6 @@ CLBR|Colombier Acquisition Corp. Class A Common Stock|N|CLBR|N|100|N|CLBR
 CLBR.U|Colombier Acquisition Corp. Units, each consisting of one share of Class A common stock, and one-third of one redeemable warrant|N|CLBR.U|N|100|N|CLBR=
 CLBR.W|Colombier Acquisition Corp. Warrants, each exercisable for one share of Class A common stock at an exercise price of $11.50 per share|N|CLBR.WS|N|100|N|CLBR+
 CLDL|Direxion Daily Cloud Computing Bull 2X Shares|P|CLDL|Y|100|N|CLDL
-CLDR|Cloudera, Inc. Common Stock|N|CLDR|N|100|N|CLDR
 CLDS|Direxion Daily Cloud Computing Bear 2X Shares|P|CLDS|Y|100|N|CLDS
 CLDT|Chatham Lodging Trust (REIT) Common Shares of Beneficial Interest|N|CLDT|N|100|N|CLDT
 CLDT$A|Chatham Lodging Trust (REIT) 6.625% Series A Cumulative Redeemable Preferred Shares of Beneficial Interest|N|CLDTpA|N|100|N|CLDT-A
@@ -2699,6 +2698,7 @@ HUYA|HUYA Inc. American depositary shares, each  representing one Class A ordina
 HVAL|ALPS Hillman Active Value ETF|P|HVAL|Y|100|N|HVAL
 HVT|Haverty Furniture Companies, Inc. Common Stock|N|HVT|N|100|N|HVT
 HVT.A|Haverty Furniture Companies, Inc. Common Stock|N|HVT.A|N|100|N|HVT.A
+HWKZ.U|Hawks Acquisition Corp Units, each consisting of one share of Class A common stock and one-half of one redeemable public warrant|N|HWKZ.U|N|100|N|HWKZ=
 HWM|Howmet Aerospace Inc. Common Stock|N|HWM|N|100|N|HWM
 HWM$|Howmet Aerospace Inc. $3.75 Preferred Stock|A|HWMp|N|100|N|HWM-
 HXL|Hexcel Corporation Common Stock|N|HXL|N|100|N|HXL
@@ -3363,6 +3363,7 @@ LCR|Leuthold Core ETF|P|LCR|Y|100|N|LCR
 LCTD|BlackRock World ex U.S. Carbon Transition Readiness ETF|P|LCTD|Y|100|N|LCTD
 LCTU|BlackRock U.S. Carbon Transition Readiness ETF|P|LCTU|Y|100|N|LCTU
 LCTX|Lineage Cell Therapeutics, Inc. Common Stock|A|LCTX|N|100|N|LCTX
+LCW.U|Learn CW Investment Corporation Units, each consisting of one Class A ordinary share and one-half of one redeemable warrant|N|LCW.U|N|100|N|LCW=
 LD|iPath Bloomberg Lead Subindex Total Return SM Index ETN|P|LD|N|100|N|LD
 LDI|loanDepot, Inc. Class A Common Stock|N|LDI|N|100|N|LDI
 LDOS|Leidos Holdings, Inc. Common Stock|N|LDOS|N|100|N|LDOS
@@ -4323,6 +4324,7 @@ PIM|Putnam Master Intermediate Income Trust Common Stock|N|PIM|N|100|N|PIM
 PIN|Invesco India ETF|P|PIN|Y|100|N|PIN
 PINE|Alpine Income Property Trust, Inc. Common Stock|N|PINE|N|100|N|PINE
 PING|Ping Identity Holding Corp. Common Stock|N|PING|N|100|N|PING
+PINK|Simplify Health Care ETF|P|PINK|Y|100|N|PINK
 PINS|Pinterest, Inc. Class A Common Stock|N|PINS|N|100|N|PINS
 PIPP|Pine Island Acquisition Corp. Class A Common Stock|N|PIPP|N|100|N|PIPP
 PIPP.U|Pine Island Acquisition Corp. Units, each consisting of one share of Class A common stock and one-third of one redeemable warrant|N|PIPP.U|N|100|N|PIPP=
@@ -4406,7 +4408,6 @@ PRG|PROG Holdings, Inc. Common Stock|N|PRG|N|100|N|PRG
 PRGO|Perrigo Company plc Ordinary Shares|N|PRGO|N|100|N|PRGO
 PRI|Primerica, Inc. Common Stock|N|PRI|N|100|N|PRI
 PRIF$D|Priority Income Fund, Inc. 7.00% Series D Term Preferred Stock due 2029|N|PRIFpD|N|100|N|PRIF-D
-PRIF$E|Priority Income Fund, Inc. 6.375% Series E Preferred Stock Due 2024|N|PRIFpE|N|100|N|PRIF-E
 PRIF$F|Priority Income Fund, Inc. 6.625% Series F Term Preferred Stock due 2027|N|PRIFpF|N|100|N|PRIF-F
 PRIF$G|Priority Income Fund, Inc. 6.25% Series G Preferred Stock Due 2026|N|PRIFpG|N|100|N|PRIF-G
 PRIF$H|Priority Income Fund, Inc. 6.00% Series H Term Preferred Stock due 2026|N|PRIFpH|N|100|N|PRIF-H
@@ -6189,4 +6190,4 @@ ZVV|NYSE ARCA test stock|P|ZVV|N|100|Y|ZVV
 ZWS|Zurn Water Solutions Corporation Common Stock|N|ZWS|N|100|N|ZWS
 ZXIET|IEX Test Company Test Symbol Three for IEX|V|ZXIET|N|100|Y|ZXIET
 ZYME|Zymeworks Inc. Common Shares|N|ZYME|N|100|N|ZYME
-File Creation Time: 1007202107:00||||||
+File Creation Time: 1008202121:31||||||
