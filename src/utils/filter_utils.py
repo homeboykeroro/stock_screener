@@ -117,10 +117,10 @@ def get_upside_change_boolean_df(
         gap_up_pct = unusual_upside_indicators.get( 'gapUpPct', None )
         higher_high_pct = unusual_upside_indicators.get( 'higherHighPct', None )
 
-        low_df = src_df.loc[ :, idx[ :, 'Low' ] ].rename( columns={ 'Low': 'Compare' } )
-        high_pct_change_df = src_df.loc[ :, idx[ :, 'High Change' ] ].rename( columns={ 'High Change': 'Compare' } )
-        close_pct_change_df = src_df.loc[ :, idx[ :, 'Close Change' ] ].rename( columns={ 'Close Change': 'Compare' } )
-        upper_body_df = src_df.loc[ :, idx[ :, 'Upper Body' ] ].rename( columns={ 'Upper Body': 'Compare' } )
+        low_df = src_df.loc[ :, idx[ :, 'Low' ] ].rename( columns={ 'Low': 'Candlestick' } )
+        high_pct_change_df = src_df.loc[ :, idx[ :, 'High Change' ] ].rename( columns={ 'High Change': 'Candlestick' } )
+        close_pct_change_df = src_df.loc[ :, idx[ :, 'Close Change' ] ].rename( columns={ 'Close Change': 'Candlestick' } )
+        upper_body_df = src_df.loc[ :, idx[ :, 'Upper Body' ] ].rename( columns={ 'Upper Body': 'Candlestick' } )
         is_result_boolean_df_set = False
 
         if gap_up_pct != None:
@@ -172,15 +172,15 @@ def get_data_from_df_by_idx( src_data_df: DataFrame, src_idx_df: DataFrame ) -> 
     select_index_boolean_df = ( expand_src_idx_df == idx_df )
     
     result_df = src_data_df.where( select_index_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ].reset_index( drop=True )
-    return result_df.rename( index={ result_df.index.values[ 0 ]: 0 }, columns={ result_df.columns.get_level_values( 1 ).values[ 0 ]: 'Compare' } )
+    return result_df.rename( index={ result_df.index.values[ 0 ]: 0 } )
 
-def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: DataFrame, max_consolidation_range: int ) -> DataFrame:
+def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: DataFrame, max_range: int ) -> DataFrame:
     idx_df = derive_idx_df_from_src_df( src_data_df )
     expand_src_start_idx_df = pd.concat( [ src_start_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
 
-    if max_consolidation_range != None:
-        unusual_vol_and_upside_end_idx_df = src_start_idx_df.add( max_consolidation_range )
-        expand_src_end_idx_df = pd.concat( [ unusual_vol_and_upside_end_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
+    if max_range != None:
+        end_idx_df = src_start_idx_df.add( max_range )
+        expand_src_end_idx_df = pd.concat( [ end_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
         idx_boolean_df = ( idx_df >= expand_src_start_idx_df ) & ( idx_df <= expand_src_end_idx_df )
     else:
         idx_boolean_df = ( idx_df >= expand_src_start_idx_df )
@@ -256,4 +256,4 @@ def get_consolidation_df(
                 result_boolean_df = ( result_boolean_df ) & ( in_range_boolean_df )
 
     result_boolean_df = pd.DataFrame( result_boolean_df.any() ).T
-    return result_boolean_df
+    return result_boolean_df.rename( columns={ 'Compare': 'Consolidation' } )

@@ -35,7 +35,7 @@ def filter_by_unfilled_gap_up(
             min_observe_day_df = unusual_vol_and_upside_idx_df.sub( 1 ).apply( lambda x : day_period - x )
             min_observe_day_boolean_df = ( min_observe_day_df >= min_observe_day ).rename( columns={ 'Index': 'Compare' } )
             
-            gap_fill_value_df = get_data_from_df_by_idx( high_df, unusual_vol_and_upside_idx_df.sub( 1 ) )
+            gap_fill_value_df = get_data_from_df_by_idx( high_df, unusual_vol_and_upside_idx_df.sub( 1 ) ).rename( columns={ 'High': 'Compare' } )
             current_low_df = low_df.iloc[ [ -1 ] ].rename( columns={ 'Low': 'Compare' } ).reset_index( drop=True )
 
             if gap_fill_tolerance != None:
@@ -48,10 +48,10 @@ def filter_by_unfilled_gap_up(
             ticker_to_filtered_result_series = result_boolean_df.any()
             result_ticker_list.extend( ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist() )
 
-        log_msg( "--- Filter By Unfill Gap Pattern Time, %s seconds ---" % ( time.time() - start_time ) )
+        log_msg( "--- Filter By Unfill Gap Time, %s seconds ---" % ( time.time() - start_time ) )
     except Exception as e:
-        logging.exception( 'Filter By Unfill Gap Pattern Failed, Cause: %s' % e )
-        raise Exception( 'Filter By Unfill Gap Pattern Error' )
+        logging.exception( 'Filter By Unfill Gap Failed, Cause: %s' % e )
+        raise Exception( 'Filter By Unfill Gap Error' )
 
     return result_ticker_list
 
@@ -83,7 +83,7 @@ def filter_by_consolidation_after_momentum(
                                                             unusual_vol_and_upside_idx_df,
                                                             consolidation_tolerance, consolidation_indicators, 
                                                             consolidation_indicators_compare, count_mode,
-                                                            min_consolidation_range, max_consolidation_range )
+                                                            min_consolidation_range, max_consolidation_range ).rename( columns={ 'Consolidation': 'Compare' } )
 
             result_boolean_df = ( min_consolidation_range_boolean_df ) & ( consolidation_boolean_df )
 
@@ -94,6 +94,53 @@ def filter_by_consolidation_after_momentum(
     except Exception as e:
         logging.exception( 'Filter By Consolidation After Uptrend Momentum Failed, Cause: %s' % e  )
         raise Exception( 'Filter By Consolidation After Uptrend Momentum Error' )
+
+    return result_ticker_list
+
+def filter_by_bullish_reversal( 
+            unusual_upside_indicators=[ { 'type': 'LONG_LOWER_SHADOW', 'shadowCandlestickRatio': 50 }, 
+                                    { 'type': 'MARUBOZU', 'color': 'GREEN', 'marubozu_ratio': 50 } ],
+            compare_unusual_vol_ma=20, unusual_vol_extent=120, unusual_vol_val=300000, 
+            unusual_vol_and_upside_occurrence='FIRST',
+            all_time_low_observe_period=None,
+            day_period=20, **kwargs ):
+    start_time = time.time()
+    result_ticker_list = []
+
+    try:
+        for index, historical_data_df in enumerate( historical_data_df_list ):
+            if all_time_low_observe_period != None:
+                last_occurrence_new_low_idx_series = select_data_by_time_period( historical_data_df, all_time_low_observe_period ).loc[ :, idx[ :, 'Low' ] ].reset_index( drop=True ).idxmin()
+                last_occurrence_new_low_close_idx_series = select_data_by_time_period( historical_data_df, all_time_low_observe_period ).loc[ :, idx[ :, 'Close' ] ].reset_index( drop=True ).idxmin()
+            else:
+                all_time_low_observe_period = len( historical_data_df )
+                last_occurrence_new_low_idx_series = historical_data_df.loc[ :, idx[ :, 'Low' ] ].reset_index( drop=True ).idxmin()
+                last_occurrence_new_low_close_idx_series = historical_data_df.loc[ :, idx[ :, 'Close' ] ].reset_index( drop=True ).idxmin()
+            
+            last_occurrence_new_low_idx_df = ( pd.DataFrame( last_occurrence_new_low_idx_series ).T ).rename( columns={ 'Low': 'Compare' } )
+            last_occurrence_new_low_close_idx_df = ( pd.DataFrame( last_occurrence_new_low_close_idx_series ).T ).rename( columns={ 'Close': 'Compare' } )
+
+            new_low_period_range_df = ( last_occurrence_new_low_idx_df.apply( lambda x: all_time_low_observe_period - x ) )
+            new_low_close_period_range_df = ( last_occurrence_new_low_close_idx_df.apply( lambda x: all_time_low_observe_period - x ) )
+
+            historical_data_df = select_data_by_time_period( historical_data_df, day_period )
+
+            unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
+                                                                                unusual_upside_indicators, 
+                                                                                compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
+                                                                                unusual_vol_and_upside_occurrence ).rename( columns={ 'Index': 'Compare' } )
+            
+            reversal_after_new_low_boolean_df = ( unusual_vol_and_upside_idx_df >= new_low_period_range_df )
+            reversal_after_new_low_close_boolean_df = ( unusual_vol_and_upside_idx_df >= new_low_close_period_range_df )
+            result_boolean_df = ( reversal_after_new_low_boolean_df ) | ( reversal_after_new_low_close_boolean_df )
+
+            ticker_to_filtered_result_series = result_boolean_df.any()
+            result_ticker_list.extend( ticker_to_filtered_result_series.index[ ticker_to_filtered_result_series ].get_level_values( 0 ).tolist() )
+
+        log_msg( "--- Filter By Bullish Reversal Time, %s seconds ---" % ( time.time() - start_time ) )
+    except Exception as e:
+        logging.exception( 'Filter By Bullish Reversal Failed, Cause: %s' % e )
+        raise Exception( 'Filter By Bullish Reversal Error' )
 
     return result_ticker_list
 
@@ -117,6 +164,7 @@ def filter_stocks():
             operation_dict = {
                 'unfilled_gap_up': filter_by_unfilled_gap_up,
                 'consolidation_after_uptrend_momentum': filter_by_consolidation_after_momentum,
+                'bullish_reversal': filter_by_bullish_reversal
             }
 
             for filter_condition_dict in filter_condition_dict_list:
