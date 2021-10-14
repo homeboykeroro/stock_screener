@@ -12,7 +12,7 @@ idx = pd.IndexSlice
 
 def filter_by_unfilled_gap_up( 
             unusual_upside_indicators=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandlestickRatio': 58, 'gapUpPct': 1 }, 
-                                    { 'type': 'MARUBOZU', 'color': 'RED', 'marubozu_ratio': 58, 'higherHighPct': 1 } ],
+                                    { 'type': 'MARUBOZU', 'color': 'RED', 'marubozuRatio': 58, 'higherHighPct': 1 } ],
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
             min_observe_day=4, gap_fill_tolerance=None, 
@@ -57,7 +57,7 @@ def filter_by_unfilled_gap_up(
 
 def filter_by_consolidation_after_momentum( 
             unusual_upside_indicators=[ { 'type': 'LONG_UPPER_SHADOW', 'shadowCandlestickRatio': 58, 'gapUpPct': 1 }, 
-                                    { 'type': 'MARUBOZU', 'color': 'RED', 'marubozu_ratio': 58, 'higherHighPct': 1 } ],
+                                    { 'type': 'MARUBOZU', 'color': 'RED', 'marubozuRatio': 58, 'higherHighPct': 1 } ],
             compare_unusual_vol_ma=50, unusual_vol_extent=150, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='LAST',
             consolidation_tolerance=4, consolidation_indicators=[ 'Low', 'High', 'Close' ], 
@@ -99,7 +99,7 @@ def filter_by_consolidation_after_momentum(
 
 def filter_by_bullish_reversal( 
             unusual_upside_indicators=[ { 'type': 'LONG_LOWER_SHADOW', 'shadowCandlestickRatio': 50 }, 
-                                    { 'type': 'MARUBOZU', 'color': 'GREEN', 'marubozu_ratio': 50 } ],
+                                    { 'type': 'MARUBOZU', 'color': 'GREEN', 'marubozuRatio': 50 } ],
             compare_unusual_vol_ma=20, unusual_vol_extent=120, unusual_vol_val=300000, 
             unusual_vol_and_upside_occurrence='FIRST',
             all_time_low_observe_period=None,
@@ -109,29 +109,33 @@ def filter_by_bullish_reversal(
 
     try:
         for index, historical_data_df in enumerate( historical_data_df_list ):
+            low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
+            close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ]
+
             if all_time_low_observe_period != None:
-                last_occurrence_new_low_idx_series = select_data_by_time_period( historical_data_df, all_time_low_observe_period ).loc[ :, idx[ :, 'Low' ] ].reset_index( drop=True ).idxmin()
-                last_occurrence_new_low_close_idx_series = select_data_by_time_period( historical_data_df, all_time_low_observe_period ).loc[ :, idx[ :, 'Close' ] ].reset_index( drop=True ).idxmin()
+                low_df = select_data_by_time_period( low_df, all_time_low_observe_period )
+                close_df = select_data_by_time_period( close_df, all_time_low_observe_period )
             else:
                 all_time_low_observe_period = len( historical_data_df )
-                last_occurrence_new_low_idx_series = historical_data_df.loc[ :, idx[ :, 'Low' ] ].reset_index( drop=True ).idxmin()
-                last_occurrence_new_low_close_idx_series = historical_data_df.loc[ :, idx[ :, 'Close' ] ].reset_index( drop=True ).idxmin()
             
-            last_occurrence_new_low_idx_df = ( pd.DataFrame( last_occurrence_new_low_idx_series ).T ).rename( columns={ 'Low': 'Compare' } )
-            last_occurrence_new_low_close_idx_df = ( pd.DataFrame( last_occurrence_new_low_close_idx_series ).T ).rename( columns={ 'Close': 'Compare' } )
+            last_occurrence_new_low_idx_df = ( pd.DataFrame( low_df.reset_index( drop=True ).idxmin() ).T ).rename( columns={ 'Low': 'Compare' } )
+            last_occurrence_new_low_close_idx_df = ( pd.DataFrame( close_df.reset_index( drop=True ).idxmin() ).T ).rename( columns={ 'Close': 'Compare' } )
 
-            new_low_period_range_df = ( last_occurrence_new_low_idx_df.apply( lambda x: all_time_low_observe_period - x ) )
-            new_low_close_period_range_df = ( last_occurrence_new_low_close_idx_df.apply( lambda x: all_time_low_observe_period - x ) )
+            new_low_period_range_df = last_occurrence_new_low_idx_df.apply( lambda x: all_time_low_observe_period - x )
+            new_low_close_period_range_df = last_occurrence_new_low_close_idx_df.apply( lambda x: all_time_low_observe_period - x )
 
             historical_data_df = select_data_by_time_period( historical_data_df, day_period )
 
             unusual_vol_and_upside_idx_df = get_unusual_vol_and_upside_idx_df( historical_data_df,
                                                                                 unusual_upside_indicators, 
                                                                                 compare_unusual_vol_ma, unusual_vol_extent, unusual_vol_val,
-                                                                                unusual_vol_and_upside_occurrence ).rename( columns={ 'Index': 'Compare' } )
+                                                                                unusual_vol_and_upside_occurrence )
             
-            reversal_after_new_low_boolean_df = ( unusual_vol_and_upside_idx_df >= new_low_period_range_df )
-            reversal_after_new_low_close_boolean_df = ( unusual_vol_and_upside_idx_df >= new_low_close_period_range_df )
+            unusual_vol_and_upside_idx_df = unusual_vol_and_upside_idx_df.apply( lambda x: day_period - x ).rename( columns={ 'Index': 'Compare' } )
+            day_period_df = pd.DataFrame( np.repeat( [ [ day_period ] ], len( unusual_vol_and_upside_idx_df.columns ), axis=1 ), columns=unusual_vol_and_upside_idx_df.columns, index=unusual_vol_and_upside_idx_df.index  )
+
+            reversal_after_new_low_boolean_df = ( unusual_vol_and_upside_idx_df <= new_low_period_range_df ) & ( new_low_period_range_df <= day_period_df )
+            reversal_after_new_low_close_boolean_df = ( unusual_vol_and_upside_idx_df <= new_low_close_period_range_df ) & ( new_low_close_period_range_df <= day_period_df )
             result_boolean_df = ( reversal_after_new_low_boolean_df ) | ( reversal_after_new_low_close_boolean_df )
 
             ticker_to_filtered_result_series = result_boolean_df.any()

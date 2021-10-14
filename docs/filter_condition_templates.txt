@@ -1,7 +1,7 @@
 
 ---------------------------- UNFILLED GAP UP ----------------------------
 WITH CANDLESTICK PROPERTIES
-[ { "operation": "unfilled_gap_up", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 50, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 50, "higherHighPct": 1 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "LAST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 20 } ]
+[ { "operation": "unfilled_gap_up", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 50, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 50, "higherHighPct": 1 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "LAST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 12 } ]
 
 WITH CLOSE PCT/ GAP UP PCT ONLY
 [ { "operation": "unfilled_gap_up", "unusual_upside_indicators": { "closePct": 7.5, "gapUpPct": 1 }, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "LAST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 20 } ]
@@ -19,7 +19,7 @@ WITH CLOSE PCT/ GAP UP PCT ONLY
 
 ---------------------- BULLISH REVERSAL ----------------------
 WITH CANDLESTICK PROPERTIES
-[ { "operation": "bullish_reversal", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 60, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 50, "higherHighPct": 1 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 500000, "unusual_vol_and_upside_occurrence": "FIRST", "all_time_low_observe_period": null, "day_period": 20 } ]
+[ { "operation": "bullish_reversal", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 60, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 50, "higherHighPct": 1 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 500000, "unusual_vol_and_upside_occurrence": "LAST", "all_time_low_observe_period": 50, "day_period": 10 } ]
 
 WITH CLOSE PCT/ GAP UP PCT ONLY
 [ { "operation": "bullish_reversal", "unusual_upside_indicators": { "closePct": 7.5 }, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "FIRST", "all_time_low_observe_period": null, day_period": 12 } ]

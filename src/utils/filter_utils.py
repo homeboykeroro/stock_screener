@@ -34,6 +34,7 @@ def get_candlestick_type_boolean_df(
             candlestick_type: str, candlestick_body_color: str,
             close_pct: float, 
             gap_up_pct: float,
+            body_gap_up_pct: float,
             higher_high_pct: float,
             shadow_candlestick_ratio: float,
             marubozu_ratio: float ) -> DataFrame:
@@ -45,6 +46,9 @@ def get_candlestick_type_boolean_df(
     high_pct_change_df = src_df.loc[ :, idx[ :, 'High Change' ] ].rename( columns={ 'High Change': 'Compare' } )
     close_pct_change_df = src_df.loc[ :, idx[ :, 'Close Change' ] ].rename( columns={ 'Close Change': 'Compare' } )
     
+    normal_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Normal Gap' ] ].rename( columns={ 'Normal Gap': 'Compare' } )
+    body_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Body Gap' ] ].rename( columns={ 'Body Gap': 'Compare' } )
+
     upper_body_df = src_df.loc[ :, idx[ :, 'Upper Body' ] ].rename( columns={ 'Upper Body': 'Compare' } )
     lower_body_df = src_df.loc[ :, idx[ :, 'Lower Body' ] ].rename( columns={ 'Lower Body': 'Compare' } )
     
@@ -68,10 +72,10 @@ def get_candlestick_type_boolean_df(
         result_boolean_df = ( result_boolean_df ) & ( ~green_boolean_df )
 
     if gap_up_pct != None:
-        gap_up_diff_ref_df = upper_body_df.shift()
-        gap_up_diff_pct_df = ( ( low_df.sub( gap_up_diff_ref_df.values ).replace( 0, np.nan ) ).div( gap_up_diff_ref_df.values ) ).mul( 100 )
-        
-        result_boolean_df = ( result_boolean_df ) & ( gap_up_diff_pct_df >= gap_up_pct )
+        result_boolean_df = ( result_boolean_df ) & ( normal_gap_up_pct_change_df >= gap_up_pct )
+
+    if body_gap_up_pct != None:
+        result_boolean_df = ( result_boolean_df ) & ( body_gap_up_pct_change_df >= gap_up_pct )
     
     if close_pct != None:
         result_boolean_df = ( result_boolean_df ) & ( close_pct_change_df >= close_pct )
@@ -105,6 +109,7 @@ def get_upside_change_boolean_df(
                                             candlestick_property.get( 'color', None ),
                                             candlestick_property.get( 'closePct', None ),
                                             candlestick_property.get( 'gapUpPct', None ),
+                                            candlestick_property.get( 'bodyGapUpPct', None ),
                                             candlestick_property.get( 'higherHighPct', None ),
                                             candlestick_property.get( 'shadowCandlestickRatio', None ),
                                             candlestick_property.get( 'marubozuRatio', None ) )
@@ -115,29 +120,34 @@ def get_upside_change_boolean_df(
     elif isinstance( unusual_upside_indicators, dict ):
         close_pct = unusual_upside_indicators.get( 'closePct', None )
         gap_up_pct = unusual_upside_indicators.get( 'gapUpPct', None )
+        body_gap_up_pct = unusual_upside_indicators.get( 'bodyGapUpPct', None )
         higher_high_pct = unusual_upside_indicators.get( 'higherHighPct', None )
 
-        low_df = src_df.loc[ :, idx[ :, 'Low' ] ].rename( columns={ 'Low': 'Candlestick' } )
         high_pct_change_df = src_df.loc[ :, idx[ :, 'High Change' ] ].rename( columns={ 'High Change': 'Candlestick' } )
         close_pct_change_df = src_df.loc[ :, idx[ :, 'Close Change' ] ].rename( columns={ 'Close Change': 'Candlestick' } )
-        upper_body_df = src_df.loc[ :, idx[ :, 'Upper Body' ] ].rename( columns={ 'Upper Body': 'Candlestick' } )
-        is_result_boolean_df_set = False
+        
+        normal_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Normal Gap' ] ].rename( columns={ 'Normal Gap': 'Compare' } )
+        body_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Body Gap' ] ].rename( columns={ 'Body Gap': 'Compare' } )
+        
+        result_boolean_df = None
 
         if gap_up_pct != None:
-            gap_up_diff_ref_df = upper_body_df.shift()
-            gap_up_diff_pct_df = ( ( low_df.sub( gap_up_diff_ref_df.values ).replace( 0, np.nan ) ).div( gap_up_diff_ref_df.values ) ).mul( 100 )
-            result_boolean_df = ( gap_up_diff_pct_df >= gap_up_pct )
-            is_result_boolean_df_set = True
+            result_boolean_df = ( normal_gap_up_pct_change_df >= gap_up_pct )
+
+        if body_gap_up_pct != None:
+            if result_boolean_df is not None:
+                result_boolean_df = ( result_boolean_df ) & ( body_gap_up_pct_change_df >= body_gap_up_pct )
+            else:
+                result_boolean_df = ( body_gap_up_pct_change_df >= body_gap_up_pct )
 
         if close_pct != None:
-            if is_result_boolean_df_set:
+            if result_boolean_df is not None:
                 result_boolean_df = ( result_boolean_df ) & ( close_pct_change_df >= close_pct )
             else:
                 result_boolean_df = ( close_pct_change_df >= close_pct )
-                is_result_boolean_df_set = True
 
         if higher_high_pct != None:
-            if is_result_boolean_df_set:
+            if result_boolean_df is not None:
                 result_boolean_df = ( result_boolean_df ) & ( high_pct_change_df >= higher_high_pct )
             else:
                 result_boolean_df = ( high_pct_change_df >= higher_high_pct )

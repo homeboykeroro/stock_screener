@@ -6,6 +6,7 @@ import os, shutil
 import logging
 import ftplib
 import pandas as pd
+import numpy as np
 import yfinance as yf
 from config.config import config
 
@@ -369,13 +370,23 @@ def append_custom_indicators( src_data_dataframe_list: list ):
             close_above_open_boolean_df = ( close_df > open_df )
             close_above_open_df = close_df.where( close_above_open_boolean_df.values )
             open_above_close_df = open_df.where( ( ~close_above_open_boolean_df ).values )
-            upper_body_df = close_above_open_df.fillna( open_above_close_df ).rename( columns={ 'Compare': 'Upper Body' } )
-            result_df = pd.concat( [ result_df, upper_body_df ], axis=1 )
+            upper_body_df = close_above_open_df.fillna( open_above_close_df )
+            result_df = pd.concat( [ result_df, upper_body_df.rename( columns={ 'Compare': 'Upper Body' } ) ], axis=1 )
 
             open_below_close_df = open_df.where( close_above_open_boolean_df.values )
             close_below_open_df = close_df.where( ( ~close_above_open_boolean_df ).values )
-            lower_body_df = open_below_close_df.fillna( close_below_open_df ).rename( columns={ 'Compare': 'Lower Body' } )
-            result_df = pd.concat( [ result_df, lower_body_df ], axis=1 )
+            lower_body_df = open_below_close_df.fillna( close_below_open_df )
+            result_df = pd.concat( [ result_df, lower_body_df.rename( columns={ 'Compare': 'Lower Body' } ) ], axis=1 )
+
+            #Normal Gap Up
+            previois_close_df = close_df.shift()
+            gap_up_diff_pct_df = ( ( open_df.sub( previois_close_df.values ).replace( 0, np.nan ) ).div( previois_close_df.values ) ).mul( 100 ).rename( columns={ 'Compare': 'Normal Gap' } )
+            result_df = pd.concat( [ result_df, gap_up_diff_pct_df ], axis=1 )
+
+            #Candle Body Gap Up
+            previous_upper_body_df = upper_body_df.shift()
+            body_gap_up_diff_pct_df = ( ( lower_body_df.sub( previous_upper_body_df.values ).replace( 0, np.nan ) ).div( previous_upper_body_df.values ) ).mul( 100 ).rename( columns={ 'Compare': 'Body Gap' } )
+            result_df = pd.concat( [ result_df, body_gap_up_diff_pct_df ], axis=1 )
 
             #Volume Change
             vol_change_df = historical_data_df.loc[ :, idx[ :, 'Volume' ] ].pct_change().mul( 100 ).rename( columns={ 'Volume':'Vol Change' } )
