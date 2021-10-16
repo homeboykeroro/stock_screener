@@ -126,8 +126,8 @@ def get_upside_change_boolean_df(
         high_pct_change_df = src_df.loc[ :, idx[ :, 'High Change' ] ].rename( columns={ 'High Change': 'Candlestick' } )
         close_pct_change_df = src_df.loc[ :, idx[ :, 'Close Change' ] ].rename( columns={ 'Close Change': 'Candlestick' } )
         
-        normal_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Normal Gap' ] ].rename( columns={ 'Normal Gap': 'Compare' } )
-        body_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Body Gap' ] ].rename( columns={ 'Body Gap': 'Compare' } )
+        normal_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Normal Gap' ] ].rename( columns={ 'Normal Gap': 'Candlestick' } )
+        body_gap_up_pct_change_df = src_df.loc[ :, idx[ :, 'Body Gap' ] ].rename( columns={ 'Body Gap': 'Candlestick' } )
         
         result_boolean_df = None
 
@@ -230,7 +230,7 @@ def get_consolidation_df(
     max_close_df = expand_src_close_df.mul( max_tolerance ).set_index( repeat_src_close_df.index )
 
     repeat_idx_df = pd.concat( [ pd.DataFrame( repeat_src_low_df.index ) ] * len( repeat_src_low_df.columns ), axis=1 )
-    repeat_idx_boolean_df = ( ~repeat_idx_df.diff().fillna( 1 ).astype( bool ) )
+    repeat_idx_boolean_df = ( ~repeat_idx_df.diff().fillna( 0 ).astype( bool ) )
 
     high_in_range_boolean_df = ( repeat_src_high_df >= min_high_df ) & ( repeat_src_high_df <= max_high_df )
     low_in_range_boolean_df = ( repeat_src_low_df >= min_low_df ) & ( repeat_src_low_df <= max_low_df )

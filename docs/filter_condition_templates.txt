@@ -22,4 +22,4 @@ WITH CANDLESTICK PROPERTIES
 [ { "operation": "bullish_reversal", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 60, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 50, "higherHighPct": 1 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 500000, "unusual_vol_and_upside_occurrence": "LAST", "all_time_low_observe_period": 50, "day_period": 10 } ]
 
 WITH CLOSE PCT/ GAP UP PCT ONLY
-[ { "operation": "bullish_reversal", "unusual_upside_indicators": { "closePct": 7.5 }, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "FIRST", "all_time_low_observe_period": null, day_period": 12 } ]
+[ { "operation": "bullish_reversal", "unusual_upside_indicators": { "closePct": 6 }, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "LAST", "all_time_low_observe_period": null, "day_period": 10 } ]

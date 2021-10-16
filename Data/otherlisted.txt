@@ -208,7 +208,6 @@ ALL$H|Allstate Corporation (The) Depositary Shares each representing a 1/1,000th
 ALL$I|Allstate Corporation (The) Depositary Shares each representing a 1/1,000th interest in a share of Fixed Rate Noncumulative Perpetual Preferred Stock, Series I|N|ALLpI|N|100|N|ALL-I
 ALLE|Allegion plc Ordinary Shares|N|ALLE|N|100|N|ALLE
 ALLY|Ally Financial Inc. Common Stock|N|ALLY|N|100|N|ALLY
-ALLY$A|GMAC Capital Trust I Fixed Rate Floating Rate Trust Preferred Securities, Series 2|N|ALLYpA|N|100|N|ALLY-A
 ALP$Q|Alabama Power Company 5.00% Class A Preferred Stock, Cumulative, Par Value $1 Per Share (Stated Capital $25 Per Share)|N|ALPpQ|N|100|N|ALP-Q
 ALSN|Allison Transmission Holdings, Inc. Common Stock|N|ALSN|N|100|N|ALSN
 ALTG|Alta Equipment Group Inc. Class A Common Stock|N|ALTG|N|100|N|ALTG
@@ -2114,6 +2113,7 @@ FMS|Fresenius Medical Care AG Common Stock|N|FMS|N|100|N|FMS
 FMX|Fomento Economico Mexicano S.A.B. de C.V. Common Stock|N|FMX|N|100|N|FMX
 FMY|First Trust Motgage Income Fund Common Shares of Beneficial Interest|N|FMY|N|100|N|FMY
 FN|Fabrinet Ordinary Shares|N|FN|N|100|N|FN
+FNA|Paragon 28, Inc. Common Stock|N|FNA|N|100|N|FNA
 FNB|F.N.B. Corporation Common Stock|N|FNB|N|100|N|FNB
 FNB$E|F.N.B. Corporation Depositary Shares, each representing a 1/40th interest in a share of Fixed-to-Floating Rate Non-Cumulative Perpetual Preferred  Stock, Series E|N|FNBpE|N|100|N|FNB-E
 FNCL|Fidelity MSCI Financials Index ETF|P|FNCL|Y|100|N|FNCL
@@ -2457,7 +2457,6 @@ GPN|Global Payments Inc. Common Stock|N|GPN|N|100|N|GPN
 GPOR|Gulfport Energy Corporation Common Shares|N|GPOR|N|100|N|GPOR
 GPRK|Geopark Ltd Common Shares|N|GPRK|N|100|N|GPRK
 GPS|Gap, Inc. (The) Common Stock|N|GPS|N|100|N|GPS
-GPX|GP Strategies Corporation Common Stock|N|GPX|N|100|N|GPX
 GQRE|FlexShares Global Quality Real Estate Index Fund|P|GQRE|Y|100|N|GQRE
 GRC|Gorman-Rupp Company (The) Common Stock|N|GRC|N|100|N|GRC
 GREK|Global X MSCI Greece ETF|P|GREK|Y|100|N|GREK
@@ -3923,7 +3922,6 @@ NMR|Nomura Holdings Inc ADR American Depositary Shares|N|NMR|N|100|N|NMR
 NMS|Nuveen Minnesota Quality Municipal Income Fund |N|NMS|N|100|N|NMS
 NMT|Nuveen Massachusetts Quality Municipal Income Fund Common Stock|N|NMT|N|100|N|NMT
 NMZ|Nuveen Municipal High Income Opportunity Fund Common Stock, $0.01 par value, per share|N|NMZ|N|100|N|NMZ
-NNA|Navios Maritime Acquisition Corporation Common stock|N|NNA|N|100|N|NNA
 NNI|Nelnet, Inc. Common Stock|N|NNI|N|100|N|NNI
 NNN|National Retail Properties Common Stock|N|NNN|N|100|N|NNN
 NNN$F|National Retail Properties Depositary Shares, each representing a 1/100th interest in a share of 5.20% Series F Cumulative Redeemable Preferred Stock|N|NNNpF|N|100|N|NNN-F
@@ -4792,6 +4790,7 @@ RSXJ|VanEck Russia Small-Cap ETF|Z|RSXJ|Y|100|N|RSXJ
 RTAI|Rareview Tax Advantaged Income ETF|Z|RTAI|Y|100|N|RTAI
 RTM|Invesco S&P 500 Equal Weight Materials ETF|P|RTM|Y|100|N|RTM
 RTX|Raytheon Technologies Corporation Common Stock|N|RTX|N|100|N|RTX
+RUFF|Alpha Dog ETF|P|RUFF|Y|100|N|RUFF
 RUSL|Direxion Daily Russia Bull 2X Shares|P|RUSL|Y|100|N|RUSL
 RVI|Retail Value Inc. Common Stock |N|RVI|N|100|N|RVI
 RVLV|Revolve Group, Inc. Class A Common Stock|N|RVLV|N|100|N|RVLV
@@ -5969,7 +5968,7 @@ WFG|West Fraser Timber Co. Ltd Common stock|N|WFG|N|100|N|WFG
 WFH|Direxion Work From Home ETF|P|WFH|Y|100|N|WFH
 WFHY|WisdomTree U.S. High Yield Corporate Bond Fund|Z|WFHY|Y|100|N|WFHY
 WFIG|WisdomTree U.S. Corporate Bond Fund|Z|WFIG|Y|100|N|WFIG
-WGLD|Wilshire wShares Enhanced Gold Trust Units of fractional undivided beneficial interest in, and ownership of, the Trust|P|WGLD|N|100|N|WGLD
+WGLD|wShares Enhanced Gold ETF Units of fractional undivided beneficial interest in, and ownership of, the Trust|P|WGLD|N|100|N|WGLD
 WGO|Winnebago Industries, Inc. Common Stock|N|WGO|N|100|N|WGO
 WH|Wyndham Hotels & Resorts, Inc. Common Stock |N|WH|N|100|N|WH
 WHD|Cactus, Inc. Class A Common Stock|N|WHD|N|100|N|WHD
@@ -6198,4 +6197,4 @@ ZVV|NYSE ARCA test stock|P|ZVV|N|100|Y|ZVV
 ZWS|Zurn Water Solutions Corporation Common Stock|N|ZWS|N|100|N|ZWS
 ZXIET|IEX Test Company Test Symbol Three for IEX|V|ZXIET|N|100|Y|ZXIET
 ZYME|Zymeworks Inc. Common Shares|N|ZYME|N|100|N|ZYME
-File Creation Time: 1014202103:02||||||
+File Creation Time: 1015202121:32||||||
