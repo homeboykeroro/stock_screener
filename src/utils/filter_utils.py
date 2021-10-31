@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from pandas.core.frame import DataFrame
-from typing import Union
+from typing import List, Union
 
 idx = pd.IndexSlice
 
@@ -26,6 +26,8 @@ def get_unusual_vol_and_upside_idx_df(
         unusual_vol_and_upside_idx_df = idx_df.where( unusual_vol_and_upside_change_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ]
     if unusual_vol_and_upside_occurrence == 'LAST':
         unusual_vol_and_upside_idx_df = idx_df.where( unusual_vol_and_upside_change_boolean_df.values ).fillna( method='ffill' ).iloc[ [ -1 ] ]
+    elif unusual_vol_and_upside_occurrence == None:
+        unusual_vol_and_upside_idx_df = idx_df.where( unusual_vol_and_upside_change_boolean_df.values )
 
     return unusual_vol_and_upside_idx_df.rename( index={ unusual_vol_and_upside_idx_df.index.values[ 0 ]: 0 } )
 
@@ -75,7 +77,7 @@ def get_candlestick_type_boolean_df(
         result_boolean_df = ( result_boolean_df ) & ( normal_gap_up_pct_change_df >= gap_up_pct )
 
     if body_gap_up_pct != None:
-        result_boolean_df = ( result_boolean_df ) & ( body_gap_up_pct_change_df >= gap_up_pct )
+        result_boolean_df = ( result_boolean_df ) & ( body_gap_up_pct_change_df >= body_gap_up_pct )
     
     if close_pct != None:
         result_boolean_df = ( result_boolean_df ) & ( close_pct_change_df >= close_pct )
@@ -178,11 +180,17 @@ def get_consecutive_count_boolean_df( src_boolean_df: DataFrame, consecutive_day
 
 def get_data_from_df_by_idx( src_data_df: DataFrame, src_idx_df: DataFrame ) -> DataFrame:
     idx_df = derive_idx_df_from_src_df( src_data_df )
-    expand_src_idx_df = pd.concat( [ src_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
-    select_index_boolean_df = ( expand_src_idx_df == idx_df )
+
+    if len( src_idx_df ) == 1:
+        expand_src_idx_df = pd.concat( [ src_idx_df ] * len( src_data_df ) ).set_index( idx_df.index )
+        select_index_boolean_df = ( expand_src_idx_df == idx_df )
     
-    result_df = src_data_df.where( select_index_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ].reset_index( drop=True )
-    return result_df.rename( index={ result_df.index.values[ 0 ]: 0 } )
+        result_df = src_data_df.where( select_index_boolean_df.values ).fillna( method='bfill' ).iloc[ [ 0 ] ].reset_index( drop=True )
+        result_df = result_df.rename( index={ result_df.index.values[ 0 ]: 0 } )
+    elif len( src_data_df ) == len( src_idx_df ):
+        result_df = src_data_df.reset_index( drop=True ).where( src_idx_df.notna().values )
+
+    return result_df
 
 def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: DataFrame, max_range: int ) -> DataFrame:
     idx_df = derive_idx_df_from_src_df( src_data_df )
@@ -199,7 +207,7 @@ def get_data_from_df_by_idx_range( src_data_df: DataFrame, src_start_idx_df: Dat
     
 def get_consolidation_df( 
             historical_data_df: DataFrame,
-            start_idx: Union[int, DataFrame],
+            start_idx: DataFrame,
             consolidation_tolerance: float, consolidation_indicators: list, consolidation_indicators_compare: str, count_mode: str,
             min_consolidation_range: int, max_consolidation_range: int ) -> DataFrame:
     min_tolerance = 1 - ( consolidation_tolerance/ 100 )
@@ -210,9 +218,12 @@ def get_consolidation_df(
         src_low_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Low' ] ], start_idx, max_consolidation_range )
         src_close_df = get_data_from_df_by_idx_range( historical_data_df.loc[ :, idx[ :, 'Close' ] ], start_idx, max_consolidation_range )
     else:
-        src_high_df = historical_data_df.loc[ :, idx[ :, 'High' ] ]
-        src_low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ]
-        src_close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ]
+        end_index = len( historical_data_df )
+        start_index = end_index - start_idx
+
+        src_high_df = historical_data_df.loc[ :, idx[ :, 'High' ] ].iloc[ start_index:end_index ]
+        src_low_df = historical_data_df.loc[ :, idx[ :, 'Low' ] ].iloc[ start_index:end_index ]
+        src_close_df = historical_data_df.loc[ :, idx[ :, 'Close' ] ].iloc[ start_index:end_index ]
 
     repeat_src_high_df = pd.DataFrame( np.repeat( src_high_df.values, len( src_high_df ), axis=0 ), columns=src_high_df.columns, index=np.repeat( src_high_df.reset_index().index.tolist(), len( src_high_df ), axis=0 ) ).rename( columns={ 'High': 'Compare' } )
     expand_src_high_df = pd.concat( [ src_high_df ] * len( src_high_df ) ).rename( columns={ 'High': 'Compare' } )
@@ -267,3 +278,21 @@ def get_consolidation_df(
 
     result_boolean_df = pd.DataFrame( result_boolean_df.any() ).T
     return result_boolean_df.rename( columns={ 'Compare': 'Consolidation' } )
+
+def get_same_size_arry_elememt_np( src_np ):
+    src_np_without_nan = np.array( [ row[ ~np.isnan( row ) ] for row in src_np ], dtype=object )
+    no_of_col_arry = [ row.size for row in src_np_without_nan ]
+    max_col_no = np.amax( no_of_col_arry )
+    src_np_dtype = src_np.dtype
+
+    temp_list = []
+    for idx, arry in enumerate( src_np_without_nan ):
+        if arry.size != max_col_no:
+            nan_arry = np.empty( max_col_no - arry.size )
+            nan_arry[ : ] = np.nan
+        
+            temp_list.append( np.append( arry, nan_arry ) )
+        else:
+            temp_list.append( arry )
+
+    return np.array( temp_list, src_np_dtype )
