@@ -33,3 +33,6 @@ WITH CLOSE PCT/ GAP UP PCT ONLY
 
 ---------------------- PREVIOUS RESISTANCE TEST ----------------------
 [ { "operation": "previous_resistance_test" } ]
+
+
+
