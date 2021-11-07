@@ -112,5 +112,5 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> N
 
         log_msg('Append and Export Time, %s seconds' % (time.time() - start_time))
     except Exception as e:
-        logging.exception('Append and Export Failed, Cause: %s' % e)
-        raise Exception('Append and Export Error')
+        logging.exception('Append and Export Failed, Cause: {e}')
+        raise e
