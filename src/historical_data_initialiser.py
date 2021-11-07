@@ -1,32 +1,28 @@
 import time
-from utils.stock_data_utils import *
+import os
+import logging
+
+from config.config import config, ConfigProperty
+from factory.datasource_factory import DataSourceFactory
+
+from utils.common_util import log_msg
+from utils.file_util import clean_file_content
 
 def init():
     start_time = time.time()
-
-    root_dir = config[ 'STOCK_DATA_ROOT_FOLDER_DIR' ]
-    historical_data_source_type = config[ 'HISTORICAL_DATA_SOURCE_TYPE' ]
-
-    clean_log_and_statistics()
-    initialise_historical_data_directory()
-    download_ticker_list_from_ftp()
-
-    #Yfinance Data Source is Deprecated Due to Inaccurate Data and Unstable Download
-    if DataSourceType.YFINANCE.name == historical_data_source_type:
-        download_historical_data_from_yfinance( exchange='NQ' )
-        download_historical_data_from_yfinance( exchange='OTHER' )
-
-        append_custom_statistics_file_list = [ os.path.join( root_dir, 'Historical/Yfinance/Nasdaq' ), 
-                                                os.path.join( root_dir, 'Historical/Yfinance/Others' )  ]
-    elif DataSourceType.STOOQ.name == historical_data_source_type:
-        extract_historical_data_from_stooq_files()
-
-        append_custom_statistics_file_list = [ os.path.join( root_dir, 'Historical/Stooq/Nasdaq' ), 
-                                                os.path.join( root_dir, 'Historical/Stooq/Nyse' ), 
-                                                os.path.join( root_dir, 'Historical/Stooq/Amex' ) ]
     
-    append_custom_indicators( append_custom_statistics_file_list )
+    try:
+        root_dir = config[ConfigProperty.STOCK_DATA_ROOT_FOLDER_DIR]
+        log_dir = os.path.join(root_dir, 'log.txt')
+        clean_file_content(log_dir)
 
-    log_msg( "--- Total Stock Historical Data Initialisation Time, %s seconds ---" % ( time.time() - start_time ) )
+        historical_data_source_type = config[ConfigProperty.HISTORICAL_DATA_SOURCE_TYPE]
+        datasource = DataSourceFactory.get_datasource(historical_data_source_type)
+        datasource.initialise_historical_data()
+
+        log_msg(f'--- Total Stock Historical Data Initialisation Time, {(time.time() - start_time)} seconds ---')
+    except Exception as e:
+        logging.exception('Initialise Historical Data Failed, Cause: %s' %e)
+        raise Exception('Initialise Historical Data Error')
 
 init()
