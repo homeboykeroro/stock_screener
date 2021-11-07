@@ -22,7 +22,7 @@ def init():
 
         log_msg(f'--- Total Stock Historical Data Initialisation Time, {(time.time() - start_time)} seconds ---')
     except Exception as e:
-        logging.exception('Initialise Historical Data Failed, Cause: %s' %e)
+        logging.exception('Initialise Historical Data Failed, Cause: {e}')
         raise Exception('Initialise Historical Data Error')
 
 init()

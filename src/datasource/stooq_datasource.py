@@ -43,7 +43,7 @@ class StooqDataSource(DataSource):
                                 self.__amex_stock_data_dir], self.__complete_stock_data_dir)
 
     def get_historical_data_df_list(self):
-        return load_historical_data_into_df(self.__complete_stock_data_dir)
+        return load_historical_data_into_df([self.__complete_stock_data_dir])
 
     def __initialise_src_folder_dir(self):
         clean_folder_dir_list = [self.__nasdaq_stock_data_dir, 
