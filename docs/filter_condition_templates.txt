@@ -1,10 +1,10 @@
 
 ---------------------------- UNFILLED GAP UP ----------------------------
 WITH CANDLESTICK PROPERTIES
-[ { "operation": "unfilled_gap_up", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 50, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 50, "higherHighPct": 1 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "FIRST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 12 } ]
+[ { "operation": "unfilled_gap_up", "unusual_upside_indicators": [ { "type": "LONG_UPPER_SHADOW", "shadowCandlestickRatio": 60, "closePct": 8 }, { "type": "MARUBOZU", "color": "GREEN", "marubozuRatio": 60, "higherHighPct": 5 }, { "type": "MARUBOZU", "color": "RED", "marubozuRatio": 60, "higherHighPct": 5 } ], "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "FIRST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 20 } ]
 
 WITH CLOSE PCT/ GAP UP PCT ONLY
-[ { "operation": "unfilled_gap_up", "unusual_upside_indicators": { "closePct": 7.5, "gapUpPct": 1 }, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "FIRST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 12 } ]
+[ { "operation": "unfilled_gap_up", "unusual_upside_indicators": { "closePct": 6.2 }, "compare_unusual_vol_ma": 50, "unusual_vol_extent": 150, "unusual_vol_val": 300000, "unusual_vol_and_upside_occurrence": "FIRST", "min_observe_day": 3, "gap_fill_tolerance": null, "day_period": 20 } ]
 
 
 

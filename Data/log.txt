@@ -1,0 +1,52 @@
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/d_us_txt.zip (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/nasdaqlisted.txt (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/otherlisted.txt (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nasdaq/nasdaq_historical_data_chunk_1.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nasdaq/nasdaq_historical_data_chunk_2.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nasdaq/nasdaq_historical_data_chunk_3.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nasdaq/nasdaq_historical_data_chunk_4.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nasdaq/nasdaq_historical_data_chunk_5.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nyse/nyse_historical_data_chunk_1.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nyse/nyse_historical_data_chunk_2.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nyse/nyse_historical_data_chunk_3.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Nyse/nyse_historical_data_chunk_4.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Amex/amex_historical_data_chunk_1.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_1.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_10.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_2.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_3.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_4.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_5.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_6.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_7.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_8.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/Full/full_historical_data_chunk_9.csv (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Charts/20211110194036 (INFO)
+11/12/2021 06:31:44 PM - Delete Directory: D:/Downloads/vscode-workspace/Screener/Data/Charts/20211110194102 (INFO)
+11/12/2021 06:32:58 PM - Nasdaq Common Stock Historical Data Chunk 1 Size: 800, Export Time, 64.56664609909058 seconds (INFO)
+11/12/2021 06:34:05 PM - Nasdaq Common Stock Historical Data Chunk 2 Size: 800, Export Time, 67.02576065063477 seconds (INFO)
+11/12/2021 06:35:12 PM - Nasdaq Common Stock Historical Data Chunk 3 Size: 800, Export Time, 66.89917421340942 seconds (INFO)
+11/12/2021 06:36:31 PM - Nasdaq Common Stock Historical Data Chunk 4 Size: 800, Export Time, 79.70918989181519 seconds (INFO)
+11/12/2021 06:37:25 PM - Nasdaq Common Stock Historical Data Chunk 5 Size: 654, Export Time, 54.14224910736084 seconds (INFO)
+11/12/2021 06:37:25 PM - Nasdaq Common Stock Historical Data Extract Time, 335.139675617218 seconds (INFO)
+11/12/2021 06:38:43 PM - Nyse Common Stock Historical Data Chunk 1 Size: 800, Export Time, 77.71953463554382 seconds (INFO)
+11/12/2021 06:40:00 PM - Nyse Common Stock Historical Data Chunk 2 Size: 800, Export Time, 77.08169078826904 seconds (INFO)
+11/12/2021 06:41:14 PM - Nyse Common Stock Historical Data Chunk 3 Size: 800, Export Time, 73.2767424583435 seconds (INFO)
+11/12/2021 06:42:19 PM - Nyse Common Stock Historical Data Chunk 4 Size: 762, Export Time, 65.4456799030304 seconds (INFO)
+11/12/2021 06:42:19 PM - Nyse Common Stock Historical Data Extract Time, 628.6682703495026 seconds (INFO)
+11/12/2021 06:42:35 PM - Amex Common Stock Historical Data Chunk 1 Size: 271, Export Time, 16.080432415008545 seconds (INFO)
+11/12/2021 06:42:35 PM - Amex Common Stock Historical Data Extract Time, 644.7516951560974 seconds (INFO)
+11/12/2021 06:42:54 PM - Chunk 1 Append Custom Statistics Time, 4.194509029388428 seconds (INFO)
+11/12/2021 06:43:24 PM - Chunk 2 Append Custom Statistics Time, 3.403198719024658 seconds (INFO)
+11/12/2021 06:43:50 PM - Chunk 3 Append Custom Statistics Time, 3.7710916996002197 seconds (INFO)
+11/12/2021 06:44:20 PM - Chunk 4 Append Custom Statistics Time, 3.2990756034851074 seconds (INFO)
+11/12/2021 06:44:45 PM - Chunk 5 Append Custom Statistics Time, 3.1080150604248047 seconds (INFO)
+11/12/2021 06:45:07 PM - Chunk 6 Append Custom Statistics Time, 3.6569857597351074 seconds (INFO)
+11/12/2021 06:45:36 PM - Chunk 7 Append Custom Statistics Time, 3.4753429889678955 seconds (INFO)
+11/12/2021 06:46:04 PM - Chunk 8 Append Custom Statistics Time, 3.3656694889068604 seconds (INFO)
+11/12/2021 06:46:35 PM - Chunk 9 Append Custom Statistics Time, 2.704179286956787 seconds (INFO)
+11/12/2021 06:47:00 PM - Chunk 10 Append Custom Statistics Time, 2.0599913597106934 seconds (INFO)
+11/12/2021 06:47:05 PM - Append and Export Time, 269.9214041233063 seconds (INFO)
+11/12/2021 06:47:05 PM - --- Total Stock Historical Data Initialisation Time, 921.6010413169861 seconds --- (INFO)
+11/12/2021 07:02:29 PM - --- Filter By Unfill Gap Time, 25.603862047195435 seconds --- (INFO)
+11/12/2021 07:02:52 PM - --- Filter By Unfill Gap Time, 18.781015872955322 seconds --- (INFO)
