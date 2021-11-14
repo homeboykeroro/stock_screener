@@ -31,6 +31,7 @@ def filter_stocks():
                 
                 log_msg(f'--- Filter By {pattern}, {time.time() - start_time} seconds ---')
         except Exception as e:
-            logging.exception(f'Filter Failed, Cause: {e}')
+            print('Filter Failed')
+            logging.exception('Filter Failed, Cause:')
 
 filter_stocks()

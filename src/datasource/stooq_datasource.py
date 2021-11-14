@@ -9,7 +9,7 @@ import pandas as pd
 from config.config import config, ConfigProperty
 from datasource.datasource import DataSource
 from constant.stock_exchange import StockExchange
-from constant.indicator import Indicator
+from constant.indicator.indicator import Indicator
 
 from utils.common_util import *
 from utils.file_util import create_dir, clean_dir
@@ -88,26 +88,28 @@ class StooqDataSource(DataSource):
         self.__total_no_of_data_file += len(historical_data_file_dir_list)
 
         indicator_list = [Indicator.OPEN, Indicator.HIGH, Indicator.LOW, Indicator.CLOSE, Indicator.VOLUME]
-        stooq_historical_data_column_list = ['<TICKER>', '<DATE>', '<OPEN>', '<HIGH>', '<LOW>', '<CLOSE>', '<VOL>']
-        renamed_src_historical_data_column_list = ['Ticker', 'Date'] + indicator_list
+        stooq_historical_data_column_list = ['<OPEN>', '<HIGH>', '<LOW>', '<CLOSE>', '<VOL>']
+        ticker_column_list = ['<TICKER>']
+        date_column_list = ['<DATE>']
 
         for chunk_no, file_dir_chunk in enumerate(file_dir_chunk_list):
             chunk_export_start_time = time.time()
+            data_df_list = []
 
-            for file_idx, stock_historical_file in enumerate(file_dir_chunk):
-                stock_historical_data_df = pd.read_csv(stock_historical_file, usecols=stooq_historical_data_column_list)
-                ticker_symbol = stock_historical_data_df.iloc[0].values[0].split('.')[0]
+            for stock_historical_file in file_dir_chunk:
+                date_df = pd.read_csv(stock_historical_file, usecols=date_column_list)
+                date_index = pd.to_datetime(date_df.values.flatten(), format='%Y%m%d')
+                
+                ticker_df = pd.read_csv(stock_historical_file, usecols=ticker_column_list)
+                ticker_symbol = ticker_df.iloc[0].values[0].split('.')[0]
+                indicator_column = pd.MultiIndex.from_product([[ticker_symbol], indicator_list])
 
-                stock_historical_data_df.index = pd.to_datetime(stock_historical_data_df.loc[:, '<DATE>'], format='%Y%m%d')
-                stock_historical_data_df.index.name = 'Date'
-                stock_historical_data_df.columns = pd.MultiIndex.from_product([[ticker_symbol], renamed_src_historical_data_column_list]) 
-                stock_historical_data_df = stock_historical_data_df.loc[self.__start_date: datetime.datetime.now().strftime('%Y-%m-%d'), idx[:, indicator_list]]
-
-                if file_idx == 0:
-                    full_stock_historical_data_df = stock_historical_data_df
-                else:
-                    full_stock_historical_data_df = pd.concat([full_stock_historical_data_df, stock_historical_data_df], axis=1)
+                indicator_data_df = pd.read_csv(stock_historical_file, usecols=stooq_historical_data_column_list)
+                stock_historical_data_df = pd.DataFrame(indicator_data_df.values, index=date_index, columns=indicator_column)
+                stock_historical_data_df = stock_historical_data_df.loc[self.__start_date: datetime.datetime.now().strftime('%Y-%m-%d')]
+                data_df_list.append(stock_historical_data_df)
 
             historical_data_chunk_file_dir = os.path.join(self.__stooq_data_folder_dir, f'{stock_exchange}/historical_data_chunk_{str(chunk_no + 1)}.csv')
+            full_stock_historical_data_df = pd.concat(data_df_list, axis=1)
             full_stock_historical_data_df.to_csv(historical_data_chunk_file_dir)
             log_msg(f'{stock_exchange} Stock Historical Data Chunk {(chunk_no + 1)} Size: {len(file_dir_chunk)}, Export Time, {(time.time() - chunk_export_start_time)} seconds')

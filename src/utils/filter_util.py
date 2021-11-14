@@ -69,6 +69,7 @@ def get_price_change_property_boolean_df(
 def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandleProperty) -> DataFrame:
     candle_colour = candle_property.colour
     close_pct = candle_property.close_pct
+    high_pct = candle_property.high_pct
     gap_pct = candle_property.gap_pct
     body_gap_pct = candle_property.body_gap_pct
     upper_shadow_ratio = candle_property.upper_shadow_ratio
@@ -76,7 +77,7 @@ def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandlePr
     body_ratio = candle_property.body_ratio
 
     close_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.CLOSE_CHANGE]].rename(columns={CustomisedIndicator.CLOSE_CHANGE: RuntimeIndicator.COMPARE})
-    #high_pct_change_df = src_df.loc[:, idx[:, CustomisedIndicator.HIGH_CHANGE]].rename(columns={CustomisedIndicator.HIGH_CHANGE: RuntimeIndicator.COMPARE})
+    high_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.HIGH_CHANGE]].rename(columns={CustomisedIndicator.HIGH_CHANGE: RuntimeIndicator.COMPARE})
     normal_gap_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.NORMAL_GAP]].rename(columns={CustomisedIndicator.NORMAL_GAP: RuntimeIndicator.COMPARE})
     body_gap_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.BODY_GAP]].rename(columns={CustomisedIndicator.BODY_GAP: RuntimeIndicator.COMPARE})
     candle_colour_df = src_df.loc[:, idx[:, CustomisedIndicator.CANDLE_COLOUR]].rename(columns={CustomisedIndicator.CANDLE_COLOUR: RuntimeIndicator.COMPARE})
@@ -93,6 +94,11 @@ def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandlePr
         else:
             close_pct_boolean_df = (close_pct_df <= close_pct)
         property_boolean_df_list.append(close_pct_boolean_df)
+    
+    if high_pct != None:
+        if high_pct >= 0:
+            high_pct_boolean_df = (high_pct_df >= high_pct)
+        property_boolean_df_list.append(high_pct_boolean_df)
     
     if gap_pct != None:
         if gap_pct >= 0:

@@ -2,7 +2,8 @@ from constant.candle.candle_colour import CandleColour
 
 class CandleProperty:
     def __init__(self, colour: CandleColour=None, 
-                close_pct: float=None, normal_gap_pct: float=None, body_gap_pct: float=None, 
+                close_pct: float=None, high_pct: float=None,
+                normal_gap_pct: float=None, body_gap_pct: float=None, 
                 upper_shadow_ratio: float=None, lower_shadow_ratio: float=None, body_ratio: float=None) -> None:
         
         if upper_shadow_ratio is not None and upper_shadow_ratio < 0:
@@ -17,11 +18,12 @@ class CandleProperty:
         if colour is not None and colour != CandleColour.GREEN and colour != CandleColour.RED:
             raise Exception(f'Candle Colour of {colour} Not Found')
         
-        if not colour and not close_pct and not normal_gap_pct and not body_gap_pct and not upper_shadow_ratio and not lower_shadow_ratio and not body_ratio:
+        if not colour and not close_pct and not high_pct and not normal_gap_pct and not body_gap_pct and not upper_shadow_ratio and not lower_shadow_ratio and not body_ratio:
             raise Exception("Candle Property Can't Be Created with Zero Argument")
         
         self.__colour = colour
         self.__close_pct = close_pct
+        self.__high_pct = high_pct
         self.__normal_gap_pct = normal_gap_pct
         self.__body_gap_pct = body_gap_pct
         self.__upper_shadow_ratio = upper_shadow_ratio
@@ -43,6 +45,14 @@ class CandleProperty:
     @close_pct.setter
     def close_pct(self, close_pct):
         self.__close_pct = close_pct
+
+    @property
+    def high_pct(self):
+        return self.__high_pct
+    
+    @high_pct.setter
+    def high_pct(self, high_pct):
+        self.__high_pct = high_pct
 
     @property
     def normal_gap_pct(self):
