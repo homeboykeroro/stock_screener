@@ -1,10 +1,14 @@
 from constant.pattern import Pattern
-from constant.datasource_type import DataSourceType
-from datasource.stooq_datasource import StooqDataSource
-from model.pattern.ascending_triangle import AscendingTriange
+from constant.filter_criteria import FilterCriteria
+from model.pattern.abcd import Abcd
 
 class PatternFilterFactory:
     @staticmethod
-    def get_filter(pattern, historical_data_list, *args, **kwargs):
-        if Pattern.ASCENDING_TRIANGLE == pattern:
-            return AscendingTriange(historical_data_list)
+    def get_filter(pattern, historical_data_df: list, filter_criteria_dict: dict):
+        pattern = filter_criteria_dict.get(FilterCriteria.PATTERN)
+
+        if Pattern.ABCD == pattern:
+            return Abcd(historical_data_df, filter_criteria_dict)
+        else:
+            raise Exception('Filter Pattern of {pattern} Not Found')
+        

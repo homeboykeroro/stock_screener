@@ -3,6 +3,7 @@ import os
 import logging
 
 from config.config import config, ConfigProperty
+
 from factory.datasource_factory import DataSourceFactory
 
 from utils.common_util import log_msg
@@ -22,7 +23,6 @@ def init():
 
         log_msg(f'--- Total Stock Historical Data Initialisation Time, {(time.time() - start_time)} seconds ---')
     except Exception as e:
-        logging.exception('Initialise Historical Data Failed, Cause: {e}')
-        raise Exception('Initialise Historical Data Error')
+        logging.exception('Historical Data Initialisation Failed, Cause: {e}')
 
 init()
