@@ -132,7 +132,7 @@ def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandlePr
     result_boolean_df = logical_compare_boolean_df(property_boolean_df_list, LogicialComparison.AND)
     return result_boolean_df.rename(columns={RuntimeIndicator.COMPARE: RuntimeIndicator.CANDLE})
 
-def get_consolidation_df( 
+def get_consolidation_boolean_df( 
             historical_data_df: DataFrame,
             start_idx_df: DataFrame,
             indicator_list: list,
@@ -142,7 +142,7 @@ def get_consolidation_df(
     day_period = len(historical_data_df)
     min_tolerance = 1 - (tolerance/ 100)
     max_tolerance = 1 + (tolerance/ 100)
-    consolidation_df_list = []
+    consolidation_boolean_df_list = []
 
     for indicator in indicator_list:
         indicator_data_df = get_data_by_idx_range(historical_data_df.loc[:, idx[:, indicator]], start_idx_df)
@@ -165,15 +165,15 @@ def get_consolidation_df(
                 consecutive_boolean_count_df_list.append(single_consecutive_boolean_count_df)
             
             full_consecutive_boolean_df = pd.concat(consecutive_boolean_count_df_list, axis=0)
-            consolidation_df = (full_consecutive_boolean_df == expand_min_obsdrve_period_df)
+            consolidation_boolean_df = (full_consecutive_boolean_df == expand_min_obsdrve_period_df)
         elif count == Count.SUM:
-            consolidation_df = (in_range_boolean_df.groupby(in_range_boolean_df.index).sum() >= min_observe_Day)
+            consolidation_boolean_df = (in_range_boolean_df.groupby(in_range_boolean_df.index).sum() >= min_observe_Day)
         else:
             raise Exception(f'Count Method of {count} Not Found')
 
-        consolidation_df_list.append(pd.DataFrame(consolidation_df.any()).T)
+        consolidation_boolean_df_list.append(pd.DataFrame(consolidation_boolean_df.any()).T)
         
-    result_boolean_df = logical_compare_boolean_df(consolidation_df_list, compare)
+    result_boolean_df = logical_compare_boolean_df(consolidation_boolean_df_list, compare)
     return result_boolean_df
 
         

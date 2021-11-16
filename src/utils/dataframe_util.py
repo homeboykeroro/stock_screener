@@ -6,6 +6,8 @@ from constant.indicator.runtime_indicator import RuntimeIndicator
 
 from pandas.core.frame import DataFrame
 
+from utils.numpy_util import normalise_two_dimensional_np_element
+
 idx = pd.IndexSlice
 
 def select_data_by_period(src_df: DataFrame, day_period: int) -> DataFrame:
@@ -31,7 +33,7 @@ def get_data_by_idx(src_df: DataFrame, idx_df: DataFrame) -> DataFrame:
         result_df = src_df.where(idx_boolean_df.values).fillna(method='bfill').iloc[[0]].reset_index(drop=True)
         result_df = result_df.rename(index={result_df.index.values[0]: 0})
     elif len(src_df) == len(idx_df):
-        result_df = src_df.reset_index(drop=True).where(idx_df.notna().values)
+        result_df = src_df.where(idx_df.notna().values)
 
     return result_df
 
@@ -71,3 +73,18 @@ def logical_compare_boolean_df(boolean_df_list: list, compare: LogicialCompariso
         raise Exception('Empty Boolean Comparison List')
     
     return result_boolean_df
+
+def normalise_data_by_idx(src_df: DataFrame, idx_df: DataFrame, repeat_times: int) -> DataFrame:
+    data_df = get_data_by_idx(src_df, idx_df)
+    normalised_np = normalise_two_dimensional_np_element(data_df.values.T)
+    
+    normalised_size = normalised_np[0].size
+    ticker_list = src_df.columns.get_level_values(0).unique()
+    ref_val_col_list = [f'Ref {ref_no + 1}' for ref_no in np.arange(normalised_size)]
+
+    numeric_sequence_index = np.arange(repeat_times)
+    ticker_to_ref_val_column = pd.MultiIndex.from_product([ticker_list, ref_val_col_list])
+
+    return pd.DataFrame(np.array([normalised_np.flatten.tolist()] * repeat_times), 
+                        columns=ticker_to_ref_val_column,
+                        index=numeric_sequence_index)

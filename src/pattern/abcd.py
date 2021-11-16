@@ -1,5 +1,3 @@
-import pandas as pd
-import numpy as np
 from constant.candle.candle_colour import CandleColour
 
 from constant.indicator.indicator import Indicator
@@ -8,7 +6,7 @@ from constant.computation.occurrence import Occurrence
 from constant.filter_criteria import FilterCriteria
 
 from model.candle_property import CandleProperty
-from model.pattern.pattern_filter import PatternFilter
+from pattern.pattern_filter import PatternFilter
 
 from utils.filter_util import *
 
@@ -30,22 +28,24 @@ class Abcd(PatternFilter):
 
         unusual_price_change_property_list = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_PRICE_CHANGE_PROPERTY_LIST, [
             CandleProperty(close_pct=6),
-            CandleProperty(colour=CandleColour.GREEN, close_pct=8)
+            CandleProperty(colour=CandleColour.GREEN, close_pct=8, body_ratio=70),
+            CandleProperty(close_pct=7, body_gap_pct=3, upper_shadow_ratio=70),
+            CandleProperty(high_pct=5, body_ratio=70)
         ])
         unusual_vol_ma_compare = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_VOL_MA_COMPARE, 50)
         min_unusual_vol_extent = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_EXTENT, 150)
-        min_unusual_vol_val = self.__filter_criteria_dict(FilterCriteria.MIN_UNUSUAL_VOL_VAL, 300000)
+        min_unusual_vol_val = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_VAL, 300000)
         unusual_vol_and_price_change_occurrence = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_VOL_AND_PRICE_CHANGE_OCCURRENCE, Occurrence.FIRST)
 
         for historical_data_df in self.__historical_data_df_list:
             historical_data_df = select_data_by_period(historical_data_df, day_period)
-            unusual_vol_and_upside_idx_df = get_unusual_vol_and_price_change_idx_df(historical_data_df,
+            unusual_vol_and_price_change_idx_df = get_unusual_vol_and_price_change_idx_df(historical_data_df,
                                                                                 unusual_price_change_property_list, 
                                                                                 unusual_vol_ma_compare, min_unusual_vol_extent, min_unusual_vol_val,
                                                                                 unusual_vol_and_price_change_occurrence)
 
-            result_boolean_df = get_consolidation_df(historical_data_df, 
-                                                    unusual_vol_and_upside_idx_df,
+            result_boolean_df = get_consolidation_boolean_df(historical_data_df, 
+                                                    unusual_vol_and_price_change_idx_df,
                                                     consolidation_indicator_list, 
                                                     consolidation_tolerance, consolidation_count, consolidation_compare,
                                                     min_observe_day)
