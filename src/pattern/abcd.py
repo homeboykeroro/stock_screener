@@ -22,7 +22,7 @@ class Abcd(PatternFilter):
         min_observe_day = self.__filter_criteria_dict.get(FilterCriteria.MIN_OBSERVE_DAY, 3)
         
         consolidation_indicator_list = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_INDICATOR_LIST, [Indicator.HIGH, Indicator.LOW, Indicator.CLOSE])
-        consolidation_tolerance = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_TOLERANCE, 4)
+        consolidation_tolerance = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_TOLERANCE, 5)
         consolidation_count = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_COUNT, Count.CONSECUTIVE)
         consolidation_compare = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_COMPARE, LogicialComparison.OR)
 

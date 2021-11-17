@@ -112,4 +112,4 @@ class StooqDataSource(DataSource):
             historical_data_chunk_file_dir = os.path.join(self.__stooq_data_folder_dir, f'{stock_exchange}/historical_data_chunk_{str(chunk_no + 1)}.csv')
             full_stock_historical_data_df = pd.concat(data_df_list, axis=1)
             full_stock_historical_data_df.to_csv(historical_data_chunk_file_dir)
-            log_msg(f'{stock_exchange} Stock Historical Data Chunk {(chunk_no + 1)} Size: {len(file_dir_chunk)}, Export Time, {(time.time() - chunk_export_start_time)} seconds')
+            log_msg(f'{stock_exchange} Stock Historical Data Chunk {(chunk_no + 1)} Size: {len(data_df_list)}, Export Time, {(time.time() - chunk_export_start_time)} seconds')

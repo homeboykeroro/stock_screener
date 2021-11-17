@@ -6,3 +6,5 @@ class DataSourceFactory:
     def get_datasource(data_source_type: str):
         if DataSourceType.STOOQ == data_source_type:
             return StooqDataSource()
+        else:
+            raise Exception(f'DataSource of {data_source_type} Not Found')
