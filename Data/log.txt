@@ -1,33 +1,0 @@
-11/07/2021 09:30:50 PM - Create Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/NASDAQ (INFO)
-11/07/2021 09:30:50 PM - Create Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/NYSE (INFO)
-11/07/2021 09:30:50 PM - Create Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/AMEX (INFO)
-11/07/2021 09:30:50 PM - Create Directory: D:/Downloads/vscode-workspace/Screener/Data/Historical/Stooq/FULL (INFO)
-11/07/2021 09:30:52 PM - No. of NASDAQ Ticker File: 3801 (INFO)
-11/07/2021 09:32:00 PM - NASDAQ Stock Historical Data Chunk 1 Size: 800, Export Time, 68.54523539543152 seconds (INFO)
-11/07/2021 09:33:08 PM - NASDAQ Stock Historical Data Chunk 2 Size: 800, Export Time, 67.74202084541321 seconds (INFO)
-11/07/2021 09:34:14 PM - NASDAQ Stock Historical Data Chunk 3 Size: 800, Export Time, 65.81074643135071 seconds (INFO)
-11/07/2021 09:35:23 PM - NASDAQ Stock Historical Data Chunk 4 Size: 800, Export Time, 69.49353003501892 seconds (INFO)
-11/07/2021 09:36:08 PM - NASDAQ Stock Historical Data Chunk 5 Size: 601, Export Time, 44.83984732627869 seconds (INFO)
-11/07/2021 09:36:08 PM - NASDAQ Stock Historical Data Extract Time, 317.5255126953125 seconds (INFO)
-11/07/2021 09:36:09 PM - No. of NYSE Ticker File: 3110 (INFO)
-11/07/2021 09:37:13 PM - NYSE Stock Historical Data Chunk 1 Size: 800, Export Time, 63.18872022628784 seconds (INFO)
-11/07/2021 09:38:18 PM - NYSE Stock Historical Data Chunk 2 Size: 800, Export Time, 65.70894026756287 seconds (INFO)
-11/07/2021 09:39:33 PM - NYSE Stock Historical Data Chunk 3 Size: 800, Export Time, 75.13159036636353 seconds (INFO)
-11/07/2021 09:40:35 PM - NYSE Stock Historical Data Chunk 4 Size: 710, Export Time, 62.03650403022766 seconds (INFO)
-11/07/2021 09:40:35 PM - NYSE Stock Historical Data Extract Time, 267.49450421333313 seconds (INFO)
-11/07/2021 09:40:36 PM - No. of AMEX Ticker File: 271 (INFO)
-11/07/2021 09:40:50 PM - AMEX Stock Historical Data Chunk 1 Size: 271, Export Time, 14.802422046661377 seconds (INFO)
-11/07/2021 09:40:50 PM - AMEX Stock Historical Data Extract Time, 14.886492252349854 seconds (INFO)
-11/07/2021 09:40:50 PM - Total No. of Ticker File: 7182 (INFO)
-11/07/2021 09:41:06 PM - Chunk 1 Append Custom Statistics Time, 1.3070216178894043 seconds (INFO)
-11/07/2021 09:41:20 PM - Chunk 2 Append Custom Statistics Time, 1.4247078895568848 seconds (INFO)
-11/07/2021 09:41:33 PM - Chunk 3 Append Custom Statistics Time, 1.829118013381958 seconds (INFO)
-11/07/2021 09:41:48 PM - Chunk 4 Append Custom Statistics Time, 1.2307894229888916 seconds (INFO)
-11/07/2021 09:42:01 PM - Chunk 5 Append Custom Statistics Time, 1.4909791946411133 seconds (INFO)
-11/07/2021 09:42:12 PM - Chunk 6 Append Custom Statistics Time, 1.5049734115600586 seconds (INFO)
-11/07/2021 09:42:26 PM - Chunk 7 Append Custom Statistics Time, 1.11747145652771 seconds (INFO)
-11/07/2021 09:42:40 PM - Chunk 8 Append Custom Statistics Time, 1.362471342086792 seconds (INFO)
-11/07/2021 09:42:54 PM - Chunk 9 Append Custom Statistics Time, 1.0019052028656006 seconds (INFO)
-11/07/2021 09:43:04 PM - Chunk 10 Append Custom Statistics Time, 0.4473600387573242 seconds (INFO)
-11/07/2021 09:43:06 PM - Append and Export Time, 135.38737058639526 seconds (INFO)
-11/07/2021 09:43:06 PM - --- Total Stock Historical Data Initialisation Time, 735.3382024765015 seconds --- (INFO)

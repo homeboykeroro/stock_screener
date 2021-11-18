@@ -85,7 +85,7 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> N
 
             #Colour
             close_above_open_boolean_df = (compare_close_df > compare_open_df)
-            colour_boolean_df = close_above_open_boolean_df.replace({True: CandleColour.GREEN, False: CandleColour.RED}).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_COLOUR})
+            colour_df = close_above_open_boolean_df.replace({True: CandleColour.GREEN, False: CandleColour.RED}).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_COLOUR})
 
             #Upper Shadow/ Lower Shadow/ Body Ratio
             high_low_diff_df = high_df.sub(low_df.values).rename(columns={Indicator.HIGH: RuntimeIndicator.COMPARE})
@@ -99,7 +99,7 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> N
             
             body_diff_df = upper_body_df.sub(lower_body_df.values).replace(0, np.nan)
             body_ratio_df = (body_diff_df.div(high_low_diff_df.values)).mul(100).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_BODY_RATIO})
-            upper_shadow_ratio_df = ((high_df.sub(upper_body_df.values).replace(0, np.nan)).div(high_low_diff_df.values)).mul(100).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_UPPER_SHADOW_RATIO})
+            upper_shadow_ratio_df = ((high_df.sub(upper_body_df.values).replace(0, np.nan)).div(high_low_diff_df.values)).mul(100).rename(columns={Indicator.HIGH: CustomisedIndicator.CANDLE_UPPER_SHADOW_RATIO})
             lower_shadow_ratio_df = ((lower_body_df.sub(low_df.values).replace(0, np.nan)).div(high_low_diff_df.values)).mul(100).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO})
 
             previous_upper_body_df = upper_body_df.shift()
@@ -113,11 +113,15 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> N
 
             body_gap_pct_df = lower_body_previous_upper_body_pct_df.where(lower_body_above_previous_upper_body_boolean_df.values)
             upper_body_previous_lower_body_pct_df.where(previous_lower_body_above_upper_body_boolean_df.values)
-            body_gap_pct_df = lower_body_previous_upper_body_pct_df.fillna(upper_body_previous_lower_body_pct_df)
+            body_gap_pct_df = lower_body_previous_upper_body_pct_df.fillna(upper_body_previous_lower_body_pct_df).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.BODY_GAP})
+
+            upper_body_df = upper_body_df.rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO})
+            lower_body_df = lower_body_df.rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO})
 
             customised_indicator_df_list = [historical_data_df, 
                                             close_change_df, high_change_df, vol_change_df,
-                                            colour_boolean_df,
+                                            upper_body_df, lower_body_df,
+                                            colour_df,
                                             gap_pct_df, body_gap_pct_df,
                                             body_ratio_df, upper_shadow_ratio_df, lower_shadow_ratio_df,
                                             sma_50_volume_df]

@@ -12,5 +12,7 @@ class FilterCriteria(str, Enum):
     CONSOLIDATION_INDICATOR_LIST = 'consolidation_indicator_list',
     CONSOLIDATION_TOLERANCE = 'consolidation_tolerance',
     CONSOLIDATION_COUNT = 'consolidation_count',
-    CONSOLIDATION_COMPARE = 'consolidation_compare'
+    CONSOLIDATION_COMPARE = 'consolidation_compare',
+    RESISTANCE_INDICATOR_LIST = 'resistance_indicator_list',
+    RESISTANCE_COMPARE_INDICATOR_LIST = 'resistance_compare_indicator_list'
 

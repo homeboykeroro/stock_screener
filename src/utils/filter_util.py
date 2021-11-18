@@ -24,14 +24,14 @@ def get_unusual_vol_and_price_change_idx_df(
             unusual_vol_ma_compare: int, min_unusual_vol_extent: float, min_unusual_vol_val: int,
             unusual_vol_and_price_change_occurrence: str) -> DataFrame:
     unusual_vol_boolean_df = get_unusual_vol_boolean_df(historical_data_df, unusual_vol_ma_compare, min_unusual_vol_extent, min_unusual_vol_val).rename(columns={Indicator.VOLUME: RuntimeIndicator.COMPARE})
-    price_change_property_boolean_df = get_price_change_property_boolean_df(historical_data_df, unusual_price_change_property_list).rename(columns={'Up': RuntimeIndicator.COMPARE})
+    price_change_property_boolean_df = get_price_change_property_boolean_df(historical_data_df, unusual_price_change_property_list).rename(columns={RuntimeIndicator.CANDLE: RuntimeIndicator.COMPARE})
     unusual_vol_and_price_change_property_boolean_df = (price_change_property_boolean_df) & (unusual_vol_boolean_df)
     
     idx_df = derive_idx_df(historical_data_df.loc[:, idx[:, Indicator.CLOSE]])
 
     if unusual_vol_and_price_change_occurrence == Occurrence.FIRST:
         unusual_vol_and_price_change_property_idx_df = idx_df.where(unusual_vol_and_price_change_property_boolean_df.values).fillna(method='bfill').iloc[[0]]
-    if unusual_vol_and_price_change_occurrence == Occurrence.LAST:
+    elif unusual_vol_and_price_change_occurrence == Occurrence.LAST:
         unusual_vol_and_price_change_property_idx_df = idx_df.where(unusual_vol_and_price_change_property_boolean_df.values).fillna(method='ffill').iloc[[-1]]
     elif unusual_vol_and_price_change_occurrence == Occurrence.ALL:
         unusual_vol_and_price_change_property_idx_df = idx_df.where(unusual_vol_and_price_change_property_boolean_df.values)
@@ -137,7 +137,7 @@ def get_consolidation_boolean_df(
             start_idx_df: DataFrame,
             indicator_list: list,
             tolerance: float, count: Count, compare: LogicialComparison,
-            min_observe_Day: int) -> DataFrame:
+            min_observe_day: int) -> DataFrame:
 
     day_period = len(historical_data_df)
     min_tolerance = 1 - (tolerance/ 100)
@@ -149,15 +149,15 @@ def get_consolidation_boolean_df(
         repeat_times = len(indicator_data_df)
 
         repeat_df = pd.DataFrame(np.repeat(indicator_data_df.values, repeat_times, 0), columns=indicator_data_df.columns, index=np.repeat(indicator_data_df.reset_index().index.tolist(), repeat_times, 0)).rename(columns={indicator: RuntimeIndicator.COMPARE})
-        expand_df = replicate_and_concatenate_df(indicator_data_df, repeat_times).rename(columns={indicator: RuntimeIndicator.COMPARE})
+        expand_df = replicate_and_concatenate_df(indicator_data_df, repeat_times, 0).rename(columns={indicator: RuntimeIndicator.COMPARE})
         min_range_df = expand_df.mul(min_tolerance).set_index(repeat_df.index)
         max_range_df = expand_df.mul(max_tolerance).set_index(repeat_df.index)
         in_range_boolean_df = (repeat_df >= min_range_df) & (repeat_df <= max_range_df)
 
         if count == Count.CONSECUTIVE:
             consecutive_boolean_count_df_list = []
-            expand_start_idx_df = replicate_and_concatenate_df(start_idx_df, len(repeat_df)).set_index(repeat_df.index).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
-            expand_min_obsdrve_period_df = expand_start_idx_df.apply(lambda x: day_period - x)
+            expand_start_idx_df = replicate_and_concatenate_df(start_idx_df, len(repeat_df), 0).set_index(repeat_df.index).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
+            expand_min_obsdrve_period_df = expand_start_idx_df.sub(1).apply(lambda x: day_period - x)
 
             for repeat_group_idx in range(day_period):
                 single_in_range_boolean_df = in_range_boolean_df.loc[repeat_group_idx, :]
@@ -167,7 +167,7 @@ def get_consolidation_boolean_df(
             full_consecutive_boolean_df = pd.concat(consecutive_boolean_count_df_list, axis=0)
             consolidation_boolean_df = (full_consecutive_boolean_df == expand_min_obsdrve_period_df)
         elif count == Count.SUM:
-            consolidation_boolean_df = (in_range_boolean_df.groupby(in_range_boolean_df.index).sum() >= min_observe_Day)
+            consolidation_boolean_df = (in_range_boolean_df.groupby(in_range_boolean_df.index).sum() >= min_observe_day)
         else:
             raise Exception(f'Count Method of {count} Not Found')
 

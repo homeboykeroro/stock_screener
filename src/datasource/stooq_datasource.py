@@ -12,7 +12,7 @@ from constant.stock_exchange import StockExchange
 from constant.indicator.indicator import Indicator
 
 from utils.common_util import *
-from utils.file_util import create_dir, clean_dir
+from utils.file_util import create_dir, clean_dir, extract_zip, write_txt_file_content
 from utils.stock_data_utils import load_historical_data_into_df, append_custom_indicators
 
 class StooqDataSource(DataSource):
@@ -28,6 +28,7 @@ class StooqDataSource(DataSource):
         self.__src_folder_dir = root_folder_dir
         self.__total_no_of_data_file = 0
         self.__stooq_data_folder_dir = stooq_data_folder_dir
+        self.__statistic_log_dir = 'stooq_data_statistics.txt'
         self.__src_zip_dir = os.path.join(root_folder_dir, 'd_us_txt.zip')
         self.__chart_dir = os.path.join(root_folder_dir, 'Chart')
         self.__complete_stock_data_dir = os.path.join(stooq_data_folder_dir, 'FULL')
@@ -50,9 +51,11 @@ class StooqDataSource(DataSource):
                                 self.__nyse_stock_data_dir, 
                                 self.__amex_stock_data_dir,
                                 self.__complete_stock_data_dir,
-                                self.__chart_dir]
+                                self.__chart_dir,
+                                self.__statistic_log_dir]
         
         if os.path.exists(self.__src_zip_dir):
+            extract_zip(self.__src_zip_dir, self.__stooq_data_folder_dir)
             clean_dir(self.__src_zip_dir)
 
         for dir in clean_folder_dir_list:
@@ -81,8 +84,8 @@ class StooqDataSource(DataSource):
         idx = pd.IndexSlice
 
         historical_data_file_dir_list = glob.glob(os.path.join(self.__src_folder_dir, file_pattern), recursive=True)
-        historical_data_file_dir_list = [file_dir for file_dir in historical_data_file_dir_list if len(Path(file_dir).stem.split('.')[0]) <= 4 and Path(file_dir).stem.split('.')[0].isalpha() and os.stat(file_dir).st_size > 0]
-        file_dir_chunk_list = [historical_data_file_dir_list[x: x + self.__chunk_size] for x in range(0, len(historical_data_file_dir_list), self.__chunk_size)]
+        valid_historical_data_file_dir_list = [file_dir for file_dir in historical_data_file_dir_list if len(Path(file_dir).stem.split('.')[0]) <= 4 and Path(file_dir).stem.split('.')[0].isalpha() and os.stat(file_dir).st_size > 0]
+        file_dir_chunk_list = [valid_historical_data_file_dir_list[x: x + self.__chunk_size] for x in range(0, len(valid_historical_data_file_dir_list), self.__chunk_size)]
         
         log_msg(f'No. of {stock_exchange} Ticker File: {len(historical_data_file_dir_list)}')
         self.__total_no_of_data_file += len(historical_data_file_dir_list)

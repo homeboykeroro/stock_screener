@@ -7,7 +7,9 @@ class CustomisedIndicator(str, Enum):
     MA_50_VOLUME = '50MA Volume',
     NORMAL_GAP = 'Normal Gap',
     BODY_GAP = 'Body Gap',
-    CANDLE_COLOUR = 'Candle Colour'
-    CANDLE_BODY_RATIO = 'Candle Body Ratio'
-    CANDLE_UPPER_SHADOW_RATIO = 'Candle Upper Shadow Ratio'
-    CANDLE_LOWER_SHADOW_RATIO = 'Candle Lower Shadow Ratio'
+    CANDLE_UPPER_BODY = 'Upper Body',
+    CANDLE_LOWER_BODY = 'Lower Body',
+    CANDLE_COLOUR = 'Colour',
+    CANDLE_BODY_RATIO = 'Body Ratio',
+    CANDLE_UPPER_SHADOW_RATIO = 'Upper Shadow Ratio',
+    CANDLE_LOWER_SHADOW_RATIO = 'Lower Shadow Ratio'
