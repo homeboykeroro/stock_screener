@@ -8,7 +8,7 @@ from factory.datasource_factory import DataSourceFactory
 from factory.pattern_filter_factory import PatternFilterFactory
 
 from utils.log_util import get_logger
-from utils.stock_data_utils import get_stock_chart
+from utils.stock_data_util import get_stock_chart
 
 logger = get_logger()
 

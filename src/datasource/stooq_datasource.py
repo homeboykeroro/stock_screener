@@ -13,7 +13,7 @@ from constant.indicator.indicator import Indicator
 
 from utils.log_util import get_logger
 from utils.file_util import create_dir, clean_dir, clean_txt_file_content
-from utils.stock_data_utils import load_historical_data_into_df, append_custom_indicators
+from utils.stock_data_util import load_historical_data_into_df, append_custom_indicators
 
 root_logger = get_logger()
 stooq_logger = get_logger(name='stooq_datasource', 
