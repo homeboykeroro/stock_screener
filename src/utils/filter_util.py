@@ -1,7 +1,6 @@
 from typing import List
 import numpy as np
 import pandas as pd
-from constant.candle.candle_colour import CandleColour
 
 from constant.computation.logical_comparison import LogicialComparison
 from constant.computation.count import Count

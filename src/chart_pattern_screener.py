@@ -1,6 +1,5 @@
 import time
 import json
-import logging
 
 from config.config import config, ConfigProperty
 from constant.filter_criteria import FilterCriteria
@@ -8,8 +7,10 @@ from constant.filter_criteria import FilterCriteria
 from factory.datasource_factory import DataSourceFactory
 from factory.pattern_filter_factory import PatternFilterFactory
 
-from utils.common_util import log_msg
+from utils.log_util import get_logger
 from utils.stock_data_utils import get_stock_chart
+
+logger = get_logger()
 
 def filter_stocks():
     historical_data_source_type = config[ConfigProperty.HISTORICAL_DATA_SOURCE_TYPE]
@@ -29,9 +30,8 @@ def filter_stocks():
                 ticker_list = pattern_filter.filter()
                 get_stock_chart(ticker_list, filter_criteria_dict)
                 
-                log_msg(f'--- Filter By {pattern}, {time.time() - start_time} seconds ---')
+                logger.debug(f'--- Filter By {pattern}, {time.time() - start_time} seconds ---')
         except Exception as e:
-            print('Filter Failed')
-            logging.exception('Filter Failed, Cause:')
+            logger.exception('Filter Failed, Cause:')
 
 filter_stocks()

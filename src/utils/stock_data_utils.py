@@ -10,13 +10,15 @@ from constant.indicator.customised_indicator import CustomisedIndicator
 from constant.indicator.runtime_indicator import RuntimeIndicator
 from constant.candle.candle_colour import CandleColour
 
-from utils.common_util import log_msg
+from utils.log_util import get_logger
+
+logger = get_logger()
 
 root_folder_dir = config['STOCK_DATA_ROOT_FOLDER_DIR']
 idx = pd.IndexSlice
 
 def get_stock_chart(ticker_list: list, filter_criteria_dict: list) -> None:
-    print('Number of Stock Charts: %s' % len(ticker_list))
+    logger.debug('Number of Stock Charts: %s' % len(ticker_list))
     url_list = []
 
     for ticker in ticker_list:
@@ -52,20 +54,21 @@ def load_historical_data_into_df(folder_dir_list: str) -> list:
             data_file_dir_list.extend(dir_list)
         
         df_list = [pd.read_csv(dir, header=[0, 1], index_col=0) for dir in data_file_dir_list]
-        print(f'Historical Data Loading Time, {(time.time() - start_time)} seconds')
+        logger.debug(f'Historical Data Loading Time, {(time.time() - start_time)} seconds')
     except Exception as e:
         raise e
     
     return df_list
 
-def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> None:
+def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> list:
     start_time = time.time()
     historical_data_df_list = load_historical_data_into_df(folder_dir_list)
-    
+    customised_historical_data_df_list = []
+
     try:
         for index, historical_data_df in enumerate(historical_data_df_list):
             append_start_time = time.time()
-            
+
             high_df = historical_data_df.loc[:, idx[:, Indicator.HIGH]]
             low_df = historical_data_df.loc[:, idx[:, Indicator.LOW]]
             close_df = historical_data_df.loc[:, idx[:, Indicator.CLOSE]]
@@ -105,18 +108,19 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> N
             previous_upper_body_df = upper_body_df.shift()
             previous_lower_body_df = lower_body_df.shift()
 
+            #Candle Body Gap
             lower_body_above_previous_upper_body_boolean_df = (lower_body_df > previous_upper_body_df)
             previous_lower_body_above_upper_body_boolean_df = (previous_lower_body_df > upper_body_df)
 
             lower_body_previous_upper_body_pct_df = ((lower_body_df.sub(previous_upper_body_df.values)).div(previous_upper_body_df.values)).mul(100)
             upper_body_previous_lower_body_pct_df = ((upper_body_df.sub(previous_lower_body_df.values)).div(previous_lower_body_df.values)).mul(100)
 
-            body_gap_pct_df = lower_body_previous_upper_body_pct_df.where(lower_body_above_previous_upper_body_boolean_df.values)
-            upper_body_previous_lower_body_pct_df.where(previous_lower_body_above_upper_body_boolean_df.values)
-            body_gap_pct_df = lower_body_previous_upper_body_pct_df.fillna(upper_body_previous_lower_body_pct_df).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.BODY_GAP})
+            positive_body_gap_df = lower_body_previous_upper_body_pct_df.where(lower_body_above_previous_upper_body_boolean_df.values)
+            negative_body_gap_df = upper_body_previous_lower_body_pct_df.where(previous_lower_body_above_upper_body_boolean_df.values)
+            body_gap_pct_df = positive_body_gap_df.fillna(negative_body_gap_df).rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.BODY_GAP})
 
-            upper_body_df = upper_body_df.rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO})
-            lower_body_df = lower_body_df.rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO})
+            upper_body_df = upper_body_df.rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_UPPER_BODY})
+            lower_body_df = lower_body_df.rename(columns={RuntimeIndicator.COMPARE: CustomisedIndicator.CANDLE_LOWER_BODY})
 
             customised_indicator_df_list = [historical_data_df, 
                                             close_change_df, high_change_df, vol_change_df,
@@ -127,11 +131,14 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> N
                                             sma_50_volume_df]
 
             result_df = pd.concat(customised_indicator_df_list, axis=1)
-
-            log_msg(f'Chunk {index + 1} Append Custom Statistics Time, {time.time() - append_start_time} seconds')
+            
             export_dir = f'{export_folder_dir}/full_historical_data_chunk_{index + 1}.csv'
             result_df.to_csv(export_dir)
+            customised_historical_data_df_list.append(result_df)
+            logger.debug(f'Full Historical Data Chunk {index + 1} Customised Indicator Appendage Time, {time.time() - append_start_time} seconds')
 
-        log_msg('Append and Export Time, %s seconds' % (time.time() - start_time))
+        logger.debug('Total Customised Indicator Appendage and Export Time, %s seconds' % (time.time() - start_time))
     except Exception as e:
         raise e
+    
+    return customised_historical_data_df_list
