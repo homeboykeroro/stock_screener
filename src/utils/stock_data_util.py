@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 
 from config.config import config
+from constant.filter_criteria import FilterCriteria
 from constant.indicator.indicator import Indicator
 from constant.indicator.customised_indicator import CustomisedIndicator
 from constant.indicator.runtime_indicator import RuntimeIndicator
@@ -28,11 +29,12 @@ def get_stock_chart(ticker_list: list, filter_criteria_dict: list) -> None:
     try:
         current_date = datetime.datetime.now().strftime('%Y%m%d')
         current_time = datetime.datetime.now().strftime('%H%M%S')
-        export_file_dir = os.path.join(root_folder_dir, f'Chart/{current_date}{current_time}_{filter_criteria_dict.get("pattern")}/chart.html')
-        os.mkdir(export_file_dir)
+        export_folder_dir = os.path.join(root_folder_dir, f'Chart/{current_date}{current_time}_{filter_criteria_dict.get(FilterCriteria.PATTERN)}/')
+        os.makedirs(export_folder_dir)
 
         header_html_str = f'<div style="font-size:23px; font-weight: bold; margin-bottom: 50px;">No. of Filtered Result: {str(len(ticker_list))}</div>'
         
+        export_file_dir = os.path.join(export_folder_dir, 'chart.html')
         with open(export_file_dir, 'w') as chart_file:
             chart_file.write(header_html_str)
 

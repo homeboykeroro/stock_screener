@@ -23,17 +23,17 @@ def derive_idx_df(src_df: DataFrame) -> DataFrame:
 def replicate_and_concatenate_df(src_df: DataFrame, repeat_times: int, repeat_axis) -> DataFrame:
     return pd.concat([src_df] * repeat_times, axis=repeat_axis)
 
-def get_data_by_idx(src_df: DataFrame, idx_df: DataFrame) -> DataFrame:
+def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame) -> DataFrame:
     idx_df = derive_idx_df(src_df)
 
-    if len(idx_df) == 1:
-        expand_idx_df = pd.concat([idx_df] * len(src_df)).set_index(idx_df.index)
+    if len(src_idx_df) == 1:
+        expand_idx_df = pd.concat([src_idx_df] * len(src_df)).set_index(idx_df.index)
         idx_boolean_df = (expand_idx_df == idx_df)
     
         result_df = src_df.where(idx_boolean_df.values).fillna(method='bfill').iloc[[0]].reset_index(drop=True)
         result_df = result_df.rename(index={result_df.index.values[0]: 0})
-    elif len(src_df) == len(idx_df):
-        result_df = src_df.where(idx_df.notna().values)
+    elif len(src_df) == len(src_idx_df):
+        result_df = src_df.where(src_idx_df.notna().values)
 
     return result_df
 
