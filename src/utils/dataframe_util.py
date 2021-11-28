@@ -23,15 +23,17 @@ def derive_idx_df(src_df: DataFrame) -> DataFrame:
 def replicate_and_concatenate_df(src_df: DataFrame, repeat_times: int, repeat_axis) -> DataFrame:
     return pd.concat([src_df] * repeat_times, axis=repeat_axis)
 
-def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame) -> DataFrame:
+def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame, replicate: bool = True) -> DataFrame:
     idx_df = derive_idx_df(src_df)
 
     if len(src_idx_df) == 1:
-        expand_idx_df = pd.concat([src_idx_df] * len(src_df)).set_index(idx_df.index)
+        expand_idx_df = replicate_and_concatenate_df(src_idx_df, len(src_df), 0).set_index(idx_df.index)
         idx_boolean_df = (expand_idx_df == idx_df)
-    
-        result_df = src_df.where(idx_boolean_df.values).fillna(method='bfill').iloc[[0]].reset_index(drop=True)
-        result_df = result_df.rename(index={result_df.index.values[0]: 0})
+
+        if replicate:
+            result_df = src_df.where(idx_boolean_df.values).fillna(method='bfill').iloc[[0]].reset_index(drop=True)
+        else:
+            result_df = src_df.where(idx_boolean_df.values).ffill().bfill()
     elif len(src_df) == len(src_idx_df):
         result_df = src_df.where(src_idx_df.notna().values)
 
@@ -49,9 +51,6 @@ def get_data_by_idx_range(src_df: DataFrame, start_idx_df: DataFrame, max_range:
         idx_boolean_df = (idx_df >= expand_start_idx_df)
 
     return src_df.where(idx_boolean_df.values)
-
-def get_consecutive_boolean_count_df(src_df: DataFrame) -> DataFrame:
-    return (src_df.cumsum() - src_df.cumsum().where(~src_df.values).ffill().fillna(0))
 
 def logical_compare_boolean_df(boolean_df_list: list, compare: LogicialComparison) -> DataFrame:
     if len(boolean_df_list) > 1:

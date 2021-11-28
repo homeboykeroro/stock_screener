@@ -10,7 +10,7 @@ from pattern.pattern_filter import PatternFilter
 
 from utils.filter_util import *
 
-class Abcd(PatternFilter):
+class AbcdConsolidation(PatternFilter):
     def __init__(self, historical_data_df_list: list, filter_criteria_dict: dict) -> None:
         self.__historical_data_df_list = historical_data_df_list
         self.__filter_criteria_dict = filter_criteria_dict
@@ -21,16 +21,13 @@ class Abcd(PatternFilter):
         day_period = self.__filter_criteria_dict.get(FilterCriteria.DAY_PERIOD, 30)
         min_observe_day = self.__filter_criteria_dict.get(FilterCriteria.MIN_OBSERVE_DAY, 3)
         
-        consolidation_indicator_list = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_INDICATOR_LIST, [Indicator.HIGH, Indicator.LOW, Indicator.CLOSE, CustomisedIndicator.CANDLE_UPPER_BODY, CustomisedIndicator.CANDLE_LOWER_BODY])
+        consolidation_indicator_list = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_INDICATOR_LIST, [CustomisedIndicator.CANDLE_UPPER_BODY, CustomisedIndicator.CANDLE_LOWER_BODY])
         consolidation_tolerance = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_TOLERANCE, 5)
         consolidation_count = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_COUNT, Count.CONSECUTIVE)
         consolidation_compare = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_COMPARE, LogicialComparison.OR)
 
         unusual_price_change_property_list = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_PRICE_CHANGE_PROPERTY_LIST, [
-            CandleProperty(close_pct=6),
-            CandleProperty(colour=CandleColour.GREEN, close_pct=8, body_ratio=70),
-            CandleProperty(close_pct=7, body_gap_pct=3, upper_shadow_ratio=70),
-            CandleProperty(high_pct=5, body_ratio=70)
+            CandleProperty(colour=CandleColour.GREEN, close_pct=8, high_pct=0, body_ratio=70)
         ])
         unusual_vol_ma_compare = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_VOL_MA_COMPARE, 50)
         min_unusual_vol_extent = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_EXTENT, 150)
@@ -44,12 +41,18 @@ class Abcd(PatternFilter):
                                                                                 unusual_vol_ma_compare, min_unusual_vol_extent, min_unusual_vol_val,
                                                                                 unusual_vol_and_price_change_occurrence)
 
-            result_boolean_df = get_consolidation_boolean_df(historical_data_df, 
-                                                    unusual_vol_and_price_change_idx_df,
-                                                    consolidation_indicator_list, 
-                                                    consolidation_tolerance, consolidation_count, consolidation_compare,
-                                                    min_observe_day)
+            consolidationi_boolean_df = get_consolidation_boolean_df(historical_data_df, 
+                                                        unusual_vol_and_price_change_idx_df,
+                                                        consolidation_indicator_list, 
+                                                        consolidation_tolerance, consolidation_count, consolidation_compare,
+                                                        min_observe_day)
+            
+            low_df = historical_data_df.loc[:, idx[:, Indicator.LOW]]
+            support_df = get_data_by_idx(low_df, unusual_vol_and_price_change_idx_df)
+            low_above_support_df = (low_df >= support_df)
+            support_boolean_df = pd.DataFrame(low_above_support_df.all()).T
 
+            result_boolean_df = (consolidationi_boolean_df) & (support_boolean_df)
             ticker_to_filtered_result_series = result_boolean_df.any()
             result_ticker_list.extend(ticker_to_filtered_result_series.index[ticker_to_filtered_result_series].get_level_values(0).tolist())
 

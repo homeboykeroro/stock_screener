@@ -39,9 +39,9 @@ def get_unusual_vol_and_price_change_idx_df(
     
     return unusual_vol_and_price_change_property_idx_df.rename(index={unusual_vol_and_price_change_property_idx_df.index.values[0]: 0})
 
-def get_unusual_vol_boolean_df(src_df: DataFrame, vol_ma: int, vol_extent: float, vol_val: int) -> DataFrame:
-    vol_df = src_df.loc[:, idx[:, Indicator.VOLUME]]
-    vol_ma_df = src_df.loc[:, idx[:, f'{vol_ma}MA Volume']]
+def get_unusual_vol_boolean_df(historical_data_df: DataFrame, vol_ma: int, vol_extent: float, vol_val: int) -> DataFrame:
+    vol_df = historical_data_df.loc[:, idx[:, Indicator.VOLUME]]
+    vol_ma_df = historical_data_df.loc[:, idx[:, f'{vol_ma}MA Volume']]
 
     vol_vol_ma_diff_df = ((vol_df.sub(vol_ma_df.values)).div(vol_ma_df.values)).mul(100)
     unusual_vol_boolean_df = (vol_vol_ma_diff_df >= vol_extent)
@@ -54,18 +54,25 @@ def get_unusual_vol_boolean_df(src_df: DataFrame, vol_ma: int, vol_extent: float
         return unusual_vol_boolean_df
 
 def get_price_change_property_boolean_df(
-            src_df: DataFrame,
+            historical_data_df: DataFrame,
             unusual_price_change_property_list: List[CandleProperty]) -> DataFrame:
     candle_property_boolean_df_list = []
 
     for candle_property in unusual_price_change_property_list:
-        candle_property_boolean_df = get_candlestick_type_boolean_df(src_df, candle_property)
+        candle_property_boolean_df = get_candlestick_type_boolean_df(historical_data_df, candle_property)
         candle_property_boolean_df_list.append(candle_property_boolean_df)
 
     result_boolean_df = logical_compare_boolean_df(candle_property_boolean_df_list, LogicialComparison.OR)
     return result_boolean_df
 
-def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandleProperty) -> DataFrame:
+def get_daily_volume_val_boolean_df(historical_data_df: DataFrame, volume: int) -> DataFrame:
+    vol_df = historical_data_df.loc[:, idx[:, Indicator.VOLUME]]
+    vol_boolean_df = (vol_df >= volume).all()
+
+    result_boolean_df = pd.DataFrame(vol_boolean_df.all()).T
+    return result_boolean_df
+
+def get_candlestick_type_boolean_df(historical_data_df: DataFrame, candle_property: CandleProperty) -> DataFrame:
     candle_colour = candle_property.colour
     close_pct = candle_property.close_pct
     high_pct = candle_property.high_pct
@@ -75,11 +82,11 @@ def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandlePr
     lower_shadow_ratio = candle_property.lower_shadow_ratio
     body_ratio = candle_property.body_ratio
 
-    close_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.CLOSE_CHANGE]].rename(columns={CustomisedIndicator.CLOSE_CHANGE: RuntimeIndicator.COMPARE})
-    high_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.HIGH_CHANGE]].rename(columns={CustomisedIndicator.HIGH_CHANGE: RuntimeIndicator.COMPARE})
-    normal_gap_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.NORMAL_GAP]].rename(columns={CustomisedIndicator.NORMAL_GAP: RuntimeIndicator.COMPARE})
-    body_gap_pct_df = src_df.loc[:, idx[:, CustomisedIndicator.BODY_GAP]].rename(columns={CustomisedIndicator.BODY_GAP: RuntimeIndicator.COMPARE})
-    candle_colour_df = src_df.loc[:, idx[:, CustomisedIndicator.CANDLE_COLOUR]].rename(columns={CustomisedIndicator.CANDLE_COLOUR: RuntimeIndicator.COMPARE})
+    close_pct_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.CLOSE_CHANGE]].rename(columns={CustomisedIndicator.CLOSE_CHANGE: RuntimeIndicator.COMPARE})
+    high_pct_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.HIGH_CHANGE]].rename(columns={CustomisedIndicator.HIGH_CHANGE: RuntimeIndicator.COMPARE})
+    normal_gap_pct_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.NORMAL_GAP]].rename(columns={CustomisedIndicator.NORMAL_GAP: RuntimeIndicator.COMPARE})
+    body_gap_pct_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.BODY_GAP]].rename(columns={CustomisedIndicator.BODY_GAP: RuntimeIndicator.COMPARE})
+    candle_colour_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.CANDLE_COLOUR]].rename(columns={CustomisedIndicator.CANDLE_COLOUR: RuntimeIndicator.COMPARE})
 
     property_boolean_df_list = []
 
@@ -114,17 +121,17 @@ def get_candlestick_type_boolean_df(src_df: DataFrame, candle_property: CandlePr
         property_boolean_df_list.append(body_gap_pct_boolean_df)
     
     if upper_shadow_ratio != None:
-        upper_shadow_ratio_df = src_df.loc[:, idx[:, CustomisedIndicator.CANDLE_UPPER_SHADOW_RATIO]].rename(columns={CustomisedIndicator.CANDLE_UPPER_SHADOW_RATIO: RuntimeIndicator.COMPARE})
+        upper_shadow_ratio_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.CANDLE_UPPER_SHADOW_RATIO]].rename(columns={CustomisedIndicator.CANDLE_UPPER_SHADOW_RATIO: RuntimeIndicator.COMPARE})
         upper_shadow_boolean_df = (upper_shadow_ratio_df >= upper_shadow_ratio)
         property_boolean_df_list.append(upper_shadow_boolean_df)
     
     if lower_shadow_ratio != None:
-        lower_shadow_ratio_df = src_df.loc[:, idx[:, CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO]].rename(columns={CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO: RuntimeIndicator.COMPARE})
+        lower_shadow_ratio_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO]].rename(columns={CustomisedIndicator.CANDLE_LOWER_SHADOW_RATIO: RuntimeIndicator.COMPARE})
         lower_shadow_boolean_df = (lower_shadow_ratio_df >= lower_shadow_ratio)
         property_boolean_df_list.append(lower_shadow_boolean_df)
     
     if body_ratio != None:
-        body_ratio_df = src_df.loc[:, idx[:, CustomisedIndicator.CANDLE_BODY_RATIO]].rename(columns={CustomisedIndicator.CANDLE_BODY_RATIO: RuntimeIndicator.COMPARE})
+        body_ratio_df = historical_data_df.loc[:, idx[:, CustomisedIndicator.CANDLE_BODY_RATIO]].rename(columns={CustomisedIndicator.CANDLE_BODY_RATIO: RuntimeIndicator.COMPARE})
         body_shadow_boolean_df = (body_ratio_df >= body_ratio)
         property_boolean_df_list.append(body_shadow_boolean_df)
 
@@ -138,7 +145,9 @@ def get_consolidation_boolean_df(
             tolerance: float, count: Count, compare: LogicialComparison,
             min_observe_day: int) -> DataFrame:
 
-    day_period = len(historical_data_df)
+    min_observe_day_df = start_idx_df.apply(lambda x: x - min_observe_day)
+    expand_min_consolidation_range_df = replicate_and_concatenate_df(min_observe_day_df, len(historical_data_df), 0).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
+
     min_tolerance = 1 - (tolerance/ 100)
     max_tolerance = 1 + (tolerance/ 100)
     consolidation_boolean_df_list = []
@@ -146,31 +155,37 @@ def get_consolidation_boolean_df(
     for indicator in indicator_list:
         indicator_data_df = get_data_by_idx_range(historical_data_df.loc[:, idx[:, indicator]], start_idx_df)
         repeat_times = len(indicator_data_df)
-
-        repeat_df = pd.DataFrame(np.repeat(indicator_data_df.values, repeat_times, 0), columns=indicator_data_df.columns, index=np.repeat(indicator_data_df.reset_index().index.tolist(), repeat_times, 0)).rename(columns={indicator: RuntimeIndicator.COMPARE})
-        expand_df = replicate_and_concatenate_df(indicator_data_df, repeat_times, 0).rename(columns={indicator: RuntimeIndicator.COMPARE})
-        min_range_df = expand_df.mul(min_tolerance).set_index(repeat_df.index)
-        max_range_df = expand_df.mul(max_tolerance).set_index(repeat_df.index)
-        in_range_boolean_df = (repeat_df >= min_range_df) & (repeat_df <= max_range_df)
+        
+        repeat_data_df = pd.DataFrame(np.repeat(indicator_data_df.values, repeat_times, axis=0), 
+                                        columns=indicator_data_df.columns, 
+                                        index=np.repeat(indicator_data_df.reset_index().index.tolist(), repeat_times, axis=0)
+                                    ).rename(columns={indicator: RuntimeIndicator.COMPARE})
+        expand_data_df = replicate_and_concatenate_df(indicator_data_df, repeat_times, 0).rename(columns={indicator: RuntimeIndicator.COMPARE})
+        
+        min_range_df = expand_data_df.mul(min_tolerance).set_index(repeat_data_df.index)
+        max_range_df = expand_data_df.mul(max_tolerance).set_index(repeat_data_df.index)
+        in_range_boolean_df = (repeat_data_df >= min_range_df) & (repeat_data_df <= max_range_df)
 
         if count == Count.CONSECUTIVE:
-            consecutive_boolean_count_df_list = []
-            expand_start_idx_df = replicate_and_concatenate_df(start_idx_df, len(repeat_df), 0).set_index(repeat_df.index).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
-            expand_min_obsdrve_period_df = expand_start_idx_df.sub(1).apply(lambda x: day_period - x)
-
-            for repeat_group_idx in range(day_period):
-                single_in_range_boolean_df = in_range_boolean_df.loc[repeat_group_idx, :]
-                single_consecutive_boolean_count_df = get_consecutive_boolean_count_df(single_in_range_boolean_df)
-                consecutive_boolean_count_df_list.append(single_consecutive_boolean_count_df)
+            repeat_idx_df = pd.DataFrame(np.repeat(in_range_boolean_df.reset_index().loc[:, idx['index', :]].values, 3, axis=1), 
+                                            columns=in_range_boolean_df.columns, 
+                                            index=np.repeat(indicator_data_df.reset_index().index.tolist(), repeat_times, axis=0))
             
-            full_consecutive_boolean_df = pd.concat(consecutive_boolean_count_df_list, axis=0)
-            consolidation_boolean_df = (full_consecutive_boolean_df == expand_min_obsdrve_period_df)
+            cumsum_df = in_range_boolean_df.groupby(in_range_boolean_df.index).cumsum()
+
+            set_zero_for_first_grp_idx_df = repeat_idx_df.diff().fillna(1).replace({1: 0, 0: np.nan})
+            cumsum_reset_for_false_val_df = cumsum_df.where(~in_range_boolean_df)
+            cumsum_reset_df = cumsum_reset_for_false_val_df.fillna(set_zero_for_first_grp_idx_df).ffill()
+            consecutive_boolean_count_df = cumsum_df - cumsum_reset_df
+
+
         elif count == Count.SUM:
-            consolidation_boolean_df = (in_range_boolean_df.groupby(in_range_boolean_df.index).sum() >= min_observe_day)
+            sum_boolean_count_df = in_range_boolean_df.groupby().sum()
+            consolidation_boolean_df = sum_boolean_count_df
         else:
             raise Exception(f'Count Method of {count} Not Found')
 
-        consolidation_boolean_df_list.append(pd.DataFrame(consolidation_boolean_df.any()).T)
+        consolidation_boolean_df_list.append(consolidation_boolean_df)
         
     result_boolean_df = logical_compare_boolean_df(consolidation_boolean_df_list, compare)
     return result_boolean_df

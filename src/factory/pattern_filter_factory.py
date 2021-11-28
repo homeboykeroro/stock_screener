@@ -1,6 +1,6 @@
 from constant.pattern import Pattern
 from constant.filter_criteria import FilterCriteria
-from pattern.abcd import Abcd
+from pattern.abcd_consolidation import AbcdConsolidation
 
 class PatternFilterFactory:
     @staticmethod
@@ -8,7 +8,7 @@ class PatternFilterFactory:
         pattern = filter_criteria_dict.get(FilterCriteria.PATTERN)
 
         if Pattern.ABCD == pattern:
-            return Abcd(historical_data_df, filter_criteria_dict)
+            return AbcdConsolidation(historical_data_df, filter_criteria_dict)
         else:
             raise Exception('Filter Pattern of {pattern} Not Found')
         
