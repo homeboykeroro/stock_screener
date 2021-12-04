@@ -1,4 +1,4 @@
-/screener-venv/
+/stock_screener_venv/
 Data/Historical/**/*.csv
 Data/data/**/*.txt
 Data/Chart/**/*.html
