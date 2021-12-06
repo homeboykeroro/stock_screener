@@ -140,13 +140,12 @@ def get_candlestick_type_boolean_df(historical_data_df: DataFrame, candle_proper
 
 def get_consolidation_boolean_df( 
             historical_data_df: DataFrame,
-            start_idx_df: DataFrame,
+            start_idx_df: DataFrame, idx_offset: int,
             indicator_list: list,
-            tolerance: float, count: Count, compare: LogicialComparison,
+            tolerance: float, compare: LogicialComparison,
             min_observe_day: int) -> DataFrame:
 
-    min_observe_day_df = start_idx_df.apply(lambda x: x - min_observe_day)
-    expand_min_consolidation_range_df = replicate_and_concatenate_df(min_observe_day_df, len(historical_data_df), 0).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
+    full_day_range = len(historical_data_df)
 
     min_tolerance = 1 - (tolerance/ 100)
     max_tolerance = 1 + (tolerance/ 100)
@@ -154,40 +153,27 @@ def get_consolidation_boolean_df(
 
     for indicator in indicator_list:
         indicator_data_df = get_data_by_idx_range(historical_data_df.loc[:, idx[:, indicator]], start_idx_df)
-        repeat_times = len(indicator_data_df)
         
-        repeat_data_df = pd.DataFrame(np.repeat(indicator_data_df.values, repeat_times, axis=0), 
+        repeat_data_df = pd.DataFrame(np.repeat(indicator_data_df.values, full_day_range, axis=0), 
                                         columns=indicator_data_df.columns, 
-                                        index=np.repeat(indicator_data_df.reset_index().index.tolist(), repeat_times, axis=0)
+                                        index=np.repeat(indicator_data_df.reset_index().index.tolist(), full_day_range, axis=0)
                                     ).rename(columns={indicator: RuntimeIndicator.COMPARE})
-        expand_data_df = replicate_and_concatenate_df(indicator_data_df, repeat_times, 0).rename(columns={indicator: RuntimeIndicator.COMPARE})
+        expand_data_df = replicate_and_concatenate_df(indicator_data_df, full_day_range).rename(columns={indicator: RuntimeIndicator.COMPARE})
         
         min_range_df = expand_data_df.mul(min_tolerance).set_index(repeat_data_df.index)
         max_range_df = expand_data_df.mul(max_tolerance).set_index(repeat_data_df.index)
         in_range_boolean_df = (repeat_data_df >= min_range_df) & (repeat_data_df <= max_range_df)
 
-        if count == Count.CONSECUTIVE:
-            repeat_idx_df = pd.DataFrame(np.repeat(in_range_boolean_df.reset_index().loc[:, idx['index', :]].values, 3, axis=1), 
-                                            columns=in_range_boolean_df.columns, 
-                                            index=np.repeat(indicator_data_df.reset_index().index.tolist(), repeat_times, axis=0))
-            
-            cumsum_df = in_range_boolean_df.groupby(in_range_boolean_df.index).cumsum()
+        observe_day_df = start_idx_df.apply(lambda x: full_day_range - x - idx_offset)
+        min_observe_day_boolean_df = (observe_day_df >= min_observe_day)
+        min_observe_day_df = observe_day_df.where(min_observe_day_boolean_df.values)
+        expand_min_observe_day_df = replicate_and_concatenate_df(min_observe_day_df, full_day_range)
 
-            set_zero_for_first_grp_idx_df = repeat_idx_df.diff().fillna(1).replace({1: 0, 0: np.nan})
-            cumsum_reset_for_false_val_df = cumsum_df.where(~in_range_boolean_df)
-            cumsum_reset_df = cumsum_reset_for_false_val_df.fillna(set_zero_for_first_grp_idx_df).ffill()
-            consecutive_boolean_count_df = cumsum_df - cumsum_reset_df
-
-
-        elif count == Count.SUM:
-            sum_boolean_count_df = in_range_boolean_df.groupby().sum()
-            consolidation_boolean_df = sum_boolean_count_df
-        else:
-            raise Exception(f'Count Method of {count} Not Found')
+        sum_boolean_count_df = in_range_boolean_df.groupby().sum()
+        full_range_consolidation_boolean_df = (sum_boolean_count_df == expand_min_observe_day_df)
+        consolidation_boolean_df = pd.DataFrame(full_range_consolidation_boolean_df.any()).T 
 
         consolidation_boolean_df_list.append(consolidation_boolean_df)
         
     result_boolean_df = logical_compare_boolean_df(consolidation_boolean_df_list, compare)
     return result_boolean_df
-
-        

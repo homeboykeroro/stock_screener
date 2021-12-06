@@ -23,15 +23,6 @@ def remove_dir(dir: str):
     except Exception as e:
         raise e
 
-def clean_dir(dir: str):
-    for content_dir in os.listdir(dir):
-        full_dir = dir + '/' + content_dir
-
-        if os.path.isfile(full_dir):
-            os.unlink(full_dir)
-        elif os.path.isdir(full_dir):
-            shutil.rmtree(full_dir)
-
 def extract_zip(src_dir: str, dist_dir: str):
     try:
          with zipfile.ZipFile(src_dir) as archive:

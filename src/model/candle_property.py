@@ -1,6 +1,38 @@
 from constant.candle.candle_colour import CandleColour
 
 class CandleProperty:
+    CLOSE_PCT = 'close_pct'
+    HIGH_PCT = 'high_pct'
+    NORMAL_GAP_PCT = 'normal_gap_pct'
+    BODY_GAP_PCT = 'body_gap_pct'
+    COLOUR = 'colour'
+    BODY_RATIO = 'body_ratio'
+    UPPER_SHADOW_RATIO = 'upper_shadow_ratio'
+    LOWER_SHADOW_RATIO = 'lower_shadow_ratio'
+
+    @staticmethod
+    def transform(property_dict_list: list) -> list:
+        candle_property_list = []
+
+        for property in property_dict_list:
+            colour = property.get(CandleProperty.COLOUR)
+            close_pct = property.get(CandleProperty.CLOSE_PCT)
+            high_pct = property.get(CandleProperty.HIGH_PCT)
+            normal_gap_pct = property.get(CandleProperty.NORMAL_GAP_PCT)
+            body_gap_pct = property.get(CandleProperty.BODY_GAP_PCT)
+            upper_shadow_ratio = property.get(CandleProperty.UPPER_SHADOW_RATIO)
+            lower_shadow_ratio = property.get(CandleProperty.LOWER_SHADOW_RATIO)
+            body_ratio = property.get(CandleProperty.BODY_RATIO)
+
+            candle_property = CandleProperty(colour, 
+                                            close_pct, high_pct,
+                                            normal_gap_pct, body_gap_pct, 
+                                            upper_shadow_ratio, lower_shadow_ratio, body_ratio)
+            
+            candle_property_list.append(candle_property)
+        
+        return candle_property_list
+
     def __init__(self, colour: CandleColour=None, 
                 close_pct: float=None, high_pct: float=None,
                 normal_gap_pct: float=None, body_gap_pct: float=None, 

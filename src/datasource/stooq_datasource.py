@@ -12,7 +12,7 @@ from constant.stock_exchange import StockExchange
 from constant.indicator.indicator import Indicator
 
 from utils.log_util import get_logger
-from utils.file_util import create_dir, clean_dir, clean_txt_file_content
+from utils.file_util import create_dir, remove_dir, clean_txt_file_content
 from utils.stock_data_util import load_historical_data_into_df, append_custom_indicators
 
 root_logger = get_logger()
@@ -30,7 +30,7 @@ class StooqDataSource(DataSource):
         
         self.__chunk_size = chunk_size
         self.__start_date = start_date
-        self.__src_folder_dir = root_folder_dir
+        self.__root_folder_dir = root_folder_dir
         self.__total_no_of_data_file = 0
         self.__total_no_of_valid_data_file = 0
         self.__stooq_data_folder_dir = stooq_data_folder_dir
@@ -47,7 +47,12 @@ class StooqDataSource(DataSource):
         customised_historical_data_df_list = append_custom_indicators([self.__nasdaq_stock_data_dir, 
                                                                         self.__nyse_stock_data_dir,
                                                                         self.__amex_stock_data_dir], self.__complete_stock_data_dir)
-        
+
+        stooq_ticker_file_dir = os.path.join(self.__root_folder_dir, 'data')
+        if os.path.exists(stooq_ticker_file_dir):
+            remove_dir(stooq_ticker_file_dir)
+            root_logger.debug(f'Clean Directory: {stooq_ticker_file_dir}')
+
         stooq_logger.debug(f"\r{'-'*60}")
 
         for index, customised_historical_data_df in enumerate(customised_historical_data_df_list):
@@ -71,7 +76,8 @@ class StooqDataSource(DataSource):
 
         #Delete Zip
         if os.path.exists(self.__src_zip_dir):
-            clean_dir(self.__src_zip_dir)
+            remove_dir(self.__src_zip_dir)
+            root_logger.debug(f'Clean Directory: {self.__src_zip_dir}')
 
         #Create Folder If Not Exists Otherwise Delete All Files/Sub Folder in That Folder
         for dir in clean_folder_dir_list:
@@ -79,7 +85,7 @@ class StooqDataSource(DataSource):
                 create_dir(dir)
                 root_logger.debug(f'Create Directory: {dir}')
             else:
-                clean_dir(dir)
+                remove_dir(dir)
                 root_logger.debug(f'Clean Directory: {dir}')
 
     def __extract_data_from_stooq_file_and_export(self):
@@ -103,7 +109,7 @@ class StooqDataSource(DataSource):
     def __construct_historical_data_df_and_write(self, stock_exchange: str, file_pattern: str):
         idx = pd.IndexSlice
 
-        historical_data_file_dir_list = glob.glob(os.path.join(self.__src_folder_dir, file_pattern), recursive=True)
+        historical_data_file_dir_list = glob.glob(os.path.join(self.__root_folder_dir, file_pattern), recursive=True)
         valid_historical_data_file_dir_list = [file_dir for file_dir in historical_data_file_dir_list if len(Path(file_dir).stem.split('.')[0]) <= 4 and Path(file_dir).stem.split('.')[0].isalpha() and os.stat(file_dir).st_size > 0]
         file_dir_chunk_list = [valid_historical_data_file_dir_list[x: x + self.__chunk_size] for x in range(0, len(valid_historical_data_file_dir_list), self.__chunk_size)]
         

@@ -7,7 +7,7 @@ class PatternFilterFactory:
     def get_filter(historical_data_df: list, filter_criteria_dict: dict):
         pattern = filter_criteria_dict.get(FilterCriteria.PATTERN)
 
-        if Pattern.ABCD == pattern:
+        if Pattern.ABCD_CONSOLIDATION == pattern:
             return AbcdConsolidation(historical_data_df, filter_criteria_dict)
         else:
             raise Exception('Filter Pattern of {pattern} Not Found')
