@@ -21,7 +21,7 @@ def derive_idx_df(src_df: DataFrame) -> DataFrame:
     return pd.DataFrame(np.repeat(idx_np, len(src_df.columns), axis=1), columns=src_df.columns).rename(columns={src_df.columns.get_level_values(1).values[0]: RuntimeIndicator.INDEX})
 
 def replicate_and_concatenate_df(src_df: DataFrame, repeat_times: int, repeat_axis = 0) -> DataFrame:
-    return pd.concat([src_df] * repeat_times, axis=repeat_axis)
+    return pd.concat([src_df] * repeat_times, axis=repeat_axis).reset_index(drop=True)
 
 def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame, replicate: bool = True) -> DataFrame:
     idx_df = derive_idx_df(src_df)

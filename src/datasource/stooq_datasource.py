@@ -12,7 +12,7 @@ from constant.stock_exchange import StockExchange
 from constant.indicator.indicator import Indicator
 
 from utils.log_util import get_logger
-from utils.file_util import create_dir, remove_dir, clean_txt_file_content
+from utils.file_util import create_dir, clean_dir, remove_dir, clean_txt_file_content
 from utils.stock_data_util import load_historical_data_into_df, append_custom_indicators
 
 root_logger = get_logger()
@@ -77,7 +77,7 @@ class StooqDataSource(DataSource):
         #Delete Zip
         if os.path.exists(self.__src_zip_dir):
             remove_dir(self.__src_zip_dir)
-            root_logger.debug(f'Clean Directory: {self.__src_zip_dir}')
+            root_logger.debug(f'Remove Directory: {self.__src_zip_dir}')
 
         #Create Folder If Not Exists Otherwise Delete All Files/Sub Folder in That Folder
         for dir in clean_folder_dir_list:
@@ -85,7 +85,7 @@ class StooqDataSource(DataSource):
                 create_dir(dir)
                 root_logger.debug(f'Create Directory: {dir}')
             else:
-                remove_dir(dir)
+                clean_dir(dir)
                 root_logger.debug(f'Clean Directory: {dir}')
 
     def __extract_data_from_stooq_file_and_export(self):

@@ -27,9 +27,10 @@ class AbcdConsolidation(PatternFilter):
         consolidation_indicator_list_compare = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_INDICATOR_LIST_COMPARE, LogicialComparison.OR)
         consolidation_tolerance = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_TOLERANCE, 6)
 
-        unusual_price_change_property_list = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_PRICE_CHANGE_PROPERTY_LIST, [
-            CandleProperty(colour=CandleColour.GREEN, close_pct=8, high_pct=0, body_ratio=70)
-        ])
+        unusual_price_change_property_list = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_PRICE_CHANGE_PROPERTY_LIST)
+        unusual_candle_property_list = (CandleProperty.transform(unusual_price_change_property_list) 
+                                        if unusual_price_change_property_list != None 
+                                        else [CandleProperty(colour=CandleColour.GREEN, close_pct=7.5, body_ratio=70)])
         unusual_vol_ma_compare = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_VOL_MA_COMPARE, 50)
         min_unusual_vol_extent = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_EXTENT, 150)
         min_unusual_vol_val = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_VAL, 300000)
@@ -38,7 +39,7 @@ class AbcdConsolidation(PatternFilter):
         for historical_data_df in self.__historical_data_df_list:
             historical_data_df = select_data_by_period(historical_data_df, day_period)
             unusual_vol_and_price_change_idx_df = get_unusual_vol_and_price_change_idx_df(historical_data_df,
-                                                                                unusual_price_change_property_list, 
+                                                                                unusual_candle_property_list, 
                                                                                 unusual_vol_ma_compare, min_unusual_vol_extent, min_unusual_vol_val,
                                                                                 unusual_vol_and_price_change_occurrence)
 

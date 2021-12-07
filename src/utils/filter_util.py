@@ -140,7 +140,7 @@ def get_candlestick_type_boolean_df(historical_data_df: DataFrame, candle_proper
 
 def get_consolidation_boolean_df( 
             historical_data_df: DataFrame,
-            start_idx_df: DataFrame, idx_offset: int,
+            start_idx_df: DataFrame, start_idx_offset: int,
             indicator_list: list,
             tolerance: float, compare: LogicialComparison,
             min_observe_day: int) -> DataFrame:
@@ -152,7 +152,7 @@ def get_consolidation_boolean_df(
     consolidation_boolean_df_list = []
 
     for indicator in indicator_list:
-        indicator_data_df = get_data_by_idx_range(historical_data_df.loc[:, idx[:, indicator]], start_idx_df)
+        indicator_data_df = get_data_by_idx_range(historical_data_df.loc[:, idx[:, indicator]], start_idx_df.add(start_idx_offset))
         
         repeat_data_df = pd.DataFrame(np.repeat(indicator_data_df.values, full_day_range, axis=0), 
                                         columns=indicator_data_df.columns, 
@@ -164,12 +164,12 @@ def get_consolidation_boolean_df(
         max_range_df = expand_data_df.mul(max_tolerance).set_index(repeat_data_df.index)
         in_range_boolean_df = (repeat_data_df >= min_range_df) & (repeat_data_df <= max_range_df)
 
-        observe_day_df = start_idx_df.apply(lambda x: full_day_range - x - idx_offset)
+        observe_day_df = start_idx_df.apply(lambda x: full_day_range - x - start_idx_offset)
         min_observe_day_boolean_df = (observe_day_df >= min_observe_day)
-        min_observe_day_df = observe_day_df.where(min_observe_day_boolean_df.values)
+        min_observe_day_df = (observe_day_df.where(min_observe_day_boolean_df.values)).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
         expand_min_observe_day_df = replicate_and_concatenate_df(min_observe_day_df, full_day_range)
 
-        sum_boolean_count_df = in_range_boolean_df.groupby().sum()
+        sum_boolean_count_df = in_range_boolean_df.groupby(in_range_boolean_df.index).sum()
         full_range_consolidation_boolean_df = (sum_boolean_count_df == expand_min_observe_day_df)
         consolidation_boolean_df = pd.DataFrame(full_range_consolidation_boolean_df.any()).T 
 
