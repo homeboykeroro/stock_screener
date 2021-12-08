@@ -28,9 +28,7 @@ class AbcdConsolidation(PatternFilter):
         consolidation_tolerance = self.__filter_criteria_dict.get(FilterCriteria.CONSOLIDATION_TOLERANCE, 6)
 
         unusual_price_change_property_list = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_PRICE_CHANGE_PROPERTY_LIST)
-        unusual_candle_property_list = (CandleProperty.transform(unusual_price_change_property_list) 
-                                        if unusual_price_change_property_list != None 
-                                        else [CandleProperty(colour=CandleColour.GREEN, close_pct=7.5, body_ratio=70)])
+        unusual_candle_property_list = CandleProperty.transform(unusual_price_change_property_list)
         unusual_vol_ma_compare = self.__filter_criteria_dict.get(FilterCriteria.UNUSUAL_VOL_MA_COMPARE, 50)
         min_unusual_vol_extent = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_EXTENT, 150)
         min_unusual_vol_val = self.__filter_criteria_dict.get(FilterCriteria.MIN_UNUSUAL_VOL_VAL, 300000)
@@ -51,7 +49,7 @@ class AbcdConsolidation(PatternFilter):
                                                         min_observe_day)
                 
                 close_df = historical_data_df.loc[:, idx[:, Indicator.CLOSE]].rename(columns={Indicator.CLOSE: RuntimeIndicator.COMPARE})
-                latest_close_df = close_df.iloc[[-1]]
+                latest_close_df = close_df.iloc[[-1]].reset_index(drop=True)
                 unusual_vol_and_price_change_close_df = get_data_by_idx(close_df, unusual_vol_and_price_change_idx_df, replicate=False)
 
                 breakout_after_consolidation_boolean_df = (latest_close_df >= unusual_vol_and_price_change_close_df)

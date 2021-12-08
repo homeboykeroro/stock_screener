@@ -166,11 +166,11 @@ def get_consolidation_boolean_df(
 
         observe_day_df = start_idx_df.apply(lambda x: full_day_range - x - start_idx_offset)
         min_observe_day_boolean_df = (observe_day_df >= min_observe_day)
-        min_observe_day_df = (observe_day_df.where(min_observe_day_boolean_df.values)).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
-        expand_min_observe_day_df = replicate_and_concatenate_df(min_observe_day_df, full_day_range)
+        min_observe_day_df = (observe_day_df.where(min_observe_day_boolean_df.values)).reset_index(drop=True).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
 
         sum_boolean_count_df = in_range_boolean_df.groupby(in_range_boolean_df.index).sum()
-        full_range_consolidation_boolean_df = (sum_boolean_count_df == expand_min_observe_day_df)
+        last_observe_day_sum_boolean_count_df = sum_boolean_count_df.iloc[[-1]].reset_index(drop=True)
+        full_range_consolidation_boolean_df = (last_observe_day_sum_boolean_count_df == min_observe_day_df)
         consolidation_boolean_df = pd.DataFrame(full_range_consolidation_boolean_df.any()).T 
 
         consolidation_boolean_df_list.append(consolidation_boolean_df)
