@@ -1,40 +1,42 @@
-12/08/2021 07:24:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/NASDAQ (DEBUG)
-12/08/2021 07:24:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/NYSE (DEBUG)
-12/08/2021 07:24:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/AMEX (DEBUG)
-12/08/2021 07:24:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/FULL (DEBUG)
-12/08/2021 07:24:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Chart (DEBUG)
-12/08/2021 07:24:27 PM - Start Extracting Stooq Historical Data... (DEBUG)
-12/08/2021 07:24:54 PM - NASDAQ Stock Historical Data Chunk 1, Export Time, 26.38972020149231 seconds (DEBUG)
-12/08/2021 07:25:19 PM - NASDAQ Stock Historical Data Chunk 2, Export Time, 24.972689628601074 seconds (DEBUG)
-12/08/2021 07:25:43 PM - NASDAQ Stock Historical Data Chunk 3, Export Time, 24.13319492340088 seconds (DEBUG)
-12/08/2021 07:26:08 PM - NASDAQ Stock Historical Data Chunk 4, Export Time, 24.986046314239502 seconds (DEBUG)
-12/08/2021 07:26:22 PM - NASDAQ Stock Historical Data Chunk 5, Export Time, 14.046241760253906 seconds (DEBUG)
-12/08/2021 07:26:22 PM - NASDAQ Stock Historical Data Extract Time, 115.12325239181519 seconds (DEBUG)
-12/08/2021 07:26:51 PM - NYSE Stock Historical Data Chunk 1, Export Time, 28.482118368148804 seconds (DEBUG)
-12/08/2021 07:27:19 PM - NYSE Stock Historical Data Chunk 2, Export Time, 27.442922592163086 seconds (DEBUG)
-12/08/2021 07:27:48 PM - NYSE Stock Historical Data Chunk 3, Export Time, 28.738388776779175 seconds (DEBUG)
-12/08/2021 07:28:10 PM - NYSE Stock Historical Data Chunk 4, Export Time, 22.437426805496216 seconds (DEBUG)
-12/08/2021 07:28:10 PM - NYSE Stock Historical Data Extract Time, 107.59057712554932 seconds (DEBUG)
-12/08/2021 07:28:21 PM - AMEX Stock Historical Data Chunk 1, Export Time, 10.626556634902954 seconds (DEBUG)
-12/08/2021 07:28:21 PM - AMEX Stock Historical Data Extract Time, 10.813191175460815 seconds (DEBUG)
-12/08/2021 07:28:31 PM - Historical Data Loading Time, 9.754591226577759 seconds (DEBUG)
-12/08/2021 07:28:40 PM - Full Historical Data Chunk 1 Customised Indicator Appendage Time, 9.798015356063843 seconds (DEBUG)
-12/08/2021 07:28:50 PM - Full Historical Data Chunk 2 Customised Indicator Appendage Time, 9.662814617156982 seconds (DEBUG)
-12/08/2021 07:29:01 PM - Full Historical Data Chunk 3 Customised Indicator Appendage Time, 10.930873155593872 seconds (DEBUG)
-12/08/2021 07:29:14 PM - Full Historical Data Chunk 4 Customised Indicator Appendage Time, 12.660438060760498 seconds (DEBUG)
-12/08/2021 07:29:19 PM - Full Historical Data Chunk 5 Customised Indicator Appendage Time, 5.205980062484741 seconds (DEBUG)
-12/08/2021 07:29:31 PM - Full Historical Data Chunk 6 Customised Indicator Appendage Time, 12.445049047470093 seconds (DEBUG)
-12/08/2021 07:29:43 PM - Full Historical Data Chunk 7 Customised Indicator Appendage Time, 12.149434566497803 seconds (DEBUG)
-12/08/2021 07:29:55 PM - Full Historical Data Chunk 8 Customised Indicator Appendage Time, 11.238419771194458 seconds (DEBUG)
-12/08/2021 07:30:03 PM - Full Historical Data Chunk 9 Customised Indicator Appendage Time, 7.969892978668213 seconds (DEBUG)
-12/08/2021 07:30:05 PM - Full Historical Data Chunk 10 Customised Indicator Appendage Time, 2.7251358032226562 seconds (DEBUG)
-12/08/2021 07:30:05 PM - Total Customised Indicator Appendage and Export Time, 104.54848146438599 seconds (DEBUG)
-12/08/2021 07:30:09 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/data (DEBUG)
-12/08/2021 07:30:09 PM - --- Total Stock Historical Data Initialisation Time, 342.13331031799316 seconds --- (DEBUG)
-12/08/2021 07:35:06 PM - Historical Data Loading Time, 98.10748958587646 seconds (DEBUG)
-12/08/2021 07:38:58 PM - Historical Data Loading Time, 74.06456661224365 seconds (DEBUG)
-12/08/2021 07:40:35 PM - Number of Stock Charts: 1 (DEBUG)
-12/08/2021 07:40:35 PM - --- Filter By abcd_consolidation, 36.05804800987244 seconds --- (DEBUG)
-12/08/2021 07:43:09 PM - Number of Stock Charts: 38 (DEBUG)
-12/08/2021 07:43:09 PM - --- Filter By abcd_consolidation, 43.94397497177124 seconds --- (DEBUG)
-12/08/2021 08:28:42 PM - Historical Data Loading Time, 83.48901271820068 seconds (DEBUG)
+12/11/2021 11:11:26 PM - Remove Directory: D:/Downloads/vscode-workspace/stock_screener/Data/d_us_txt.zip (DEBUG)
+12/11/2021 11:11:26 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/NASDAQ (DEBUG)
+12/11/2021 11:11:26 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/NYSE (DEBUG)
+12/11/2021 11:11:26 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/AMEX (DEBUG)
+12/11/2021 11:11:27 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/FULL (DEBUG)
+12/11/2021 11:11:27 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Chart (DEBUG)
+12/11/2021 11:11:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/NASDAQ (DEBUG)
+12/11/2021 11:11:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/NYSE (DEBUG)
+12/11/2021 11:11:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/AMEX (DEBUG)
+12/11/2021 11:11:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Historical/Stooq/FULL (DEBUG)
+12/11/2021 11:11:27 PM - Create Directory: D:/Downloads/vscode-workspace/stock_screener/Data/Chart (DEBUG)
+12/11/2021 11:11:27 PM - Start Extracting Stooq Historical Data... (DEBUG)
+12/11/2021 11:11:59 PM - NASDAQ Stock Historical Data Chunk 1, Export Time, 30.36744499206543 seconds (DEBUG)
+12/11/2021 11:12:28 PM - NASDAQ Stock Historical Data Chunk 2, Export Time, 29.00967025756836 seconds (DEBUG)
+12/11/2021 11:13:01 PM - NASDAQ Stock Historical Data Chunk 3, Export Time, 33.64289093017578 seconds (DEBUG)
+12/11/2021 11:13:33 PM - NASDAQ Stock Historical Data Chunk 4, Export Time, 31.87332534790039 seconds (DEBUG)
+12/11/2021 11:13:51 PM - NASDAQ Stock Historical Data Chunk 5, Export Time, 17.555126905441284 seconds (DEBUG)
+12/11/2021 11:13:51 PM - NASDAQ Stock Historical Data Extract Time, 143.9576416015625 seconds (DEBUG)
+12/11/2021 11:14:26 PM - NYSE Stock Historical Data Chunk 1, Export Time, 35.107765436172485 seconds (DEBUG)
+12/11/2021 11:14:57 PM - NYSE Stock Historical Data Chunk 2, Export Time, 30.888354063034058 seconds (DEBUG)
+12/11/2021 11:15:31 PM - NYSE Stock Historical Data Chunk 3, Export Time, 33.39126777648926 seconds (DEBUG)
+12/11/2021 11:15:57 PM - NYSE Stock Historical Data Chunk 4, Export Time, 26.075819730758667 seconds (DEBUG)
+12/11/2021 11:15:57 PM - NYSE Stock Historical Data Extract Time, 126.03626084327698 seconds (DEBUG)
+12/11/2021 11:16:08 PM - AMEX Stock Historical Data Chunk 1, Export Time, 11.14166522026062 seconds (DEBUG)
+12/11/2021 11:16:08 PM - AMEX Stock Historical Data Extract Time, 11.235549211502075 seconds (DEBUG)
+12/11/2021 11:16:20 PM - Historical Data Loading Time, 11.891789436340332 seconds (DEBUG)
+12/11/2021 11:16:30 PM - Full Historical Data Chunk 1 Customised Indicator Appendage Time, 9.905358076095581 seconds (DEBUG)
+12/11/2021 11:16:41 PM - Full Historical Data Chunk 2 Customised Indicator Appendage Time, 10.807758569717407 seconds (DEBUG)
+12/11/2021 11:16:51 PM - Full Historical Data Chunk 3 Customised Indicator Appendage Time, 10.431567192077637 seconds (DEBUG)
+12/11/2021 11:17:01 PM - Full Historical Data Chunk 4 Customised Indicator Appendage Time, 9.675738096237183 seconds (DEBUG)
+12/11/2021 11:17:06 PM - Full Historical Data Chunk 5 Customised Indicator Appendage Time, 4.9603495597839355 seconds (DEBUG)
+12/11/2021 11:17:16 PM - Full Historical Data Chunk 6 Customised Indicator Appendage Time, 9.997509479522705 seconds (DEBUG)
+12/11/2021 11:17:26 PM - Full Historical Data Chunk 7 Customised Indicator Appendage Time, 10.752722263336182 seconds (DEBUG)
+12/11/2021 11:17:36 PM - Full Historical Data Chunk 8 Customised Indicator Appendage Time, 9.856151103973389 seconds (DEBUG)
+12/11/2021 11:17:44 PM - Full Historical Data Chunk 9 Customised Indicator Appendage Time, 7.63384485244751 seconds (DEBUG)
+12/11/2021 11:17:46 PM - Full Historical Data Chunk 10 Customised Indicator Appendage Time, 2.5475213527679443 seconds (DEBUG)
+12/11/2021 11:17:46 PM - Total Customised Indicator Appendage and Export Time, 98.4707419872284 seconds (DEBUG)
+12/11/2021 11:17:53 PM - Clean Directory: D:/Downloads/vscode-workspace/stock_screener/Data/data (DEBUG)
+12/11/2021 11:17:53 PM - --- Total Stock Historical Data Initialisation Time, 386.5731599330902 seconds --- (DEBUG)
+12/11/2021 11:30:03 PM - Historical Data Loading Time, 74.56881737709045 seconds (DEBUG)
+12/11/2021 11:30:45 PM - Number of Stock Charts: 28 (DEBUG)
+12/11/2021 11:30:45 PM - --- Filter By abcd_consolidation, 35.935874223709106 seconds --- (DEBUG)

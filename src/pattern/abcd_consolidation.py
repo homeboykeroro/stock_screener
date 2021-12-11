@@ -1,5 +1,3 @@
-from constant.candle.candle_colour import CandleColour
-
 from constant.indicator.indicator import Indicator
 from constant.computation.logical_comparison import LogicialComparison
 from constant.computation.occurrence import Occurrence

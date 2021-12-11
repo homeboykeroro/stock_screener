@@ -1,63 +1,63 @@
 ------------------------------------------------------------
-No. of Stooq NASDAQ Ticker File: 4982
-No. of Valid NASDAQ Common Stock File: 3660
+No. of Stooq NASDAQ Ticker File: 5014
+No. of Valid NASDAQ Common Stock File: 3675
 NASDAQ Stock Historical Data Chunk 1 Size: 800
 NASDAQ Stock Historical Data Chunk 2 Size: 800
 NASDAQ Stock Historical Data Chunk 3 Size: 800
 NASDAQ Stock Historical Data Chunk 4 Size: 800
-NASDAQ Stock Historical Data Chunk 5 Size: 460
+NASDAQ Stock Historical Data Chunk 5 Size: 475
 ------------------------------------------------------------
-No. of Stooq NYSE Ticker File: 4013
-No. of Valid NYSE Common Stock File: 3029
+No. of Stooq NYSE Ticker File: 4034
+No. of Valid NYSE Common Stock File: 3042
 NYSE Stock Historical Data Chunk 1 Size: 800
 NYSE Stock Historical Data Chunk 2 Size: 800
 NYSE Stock Historical Data Chunk 3 Size: 800
-NYSE Stock Historical Data Chunk 4 Size: 629
+NYSE Stock Historical Data Chunk 4 Size: 642
 ------------------------------------------------------------
 No. of Stooq AMEX Ticker File: 320
 No. of Valid AMEX Common Stock File: 272
 AMEX Stock Historical Data Chunk 1 Size: 272
 ------------------------------------------------------------
-Total No. of Stooq Ticker File: 9315
-Total No. of Valid Common Stock File: 6961
+Total No. of Stooq Ticker File: 9368
+Total No. of Valid Common Stock File: 6989
 ------------------------------------------------------------
-Full Historical Data Chunk 1, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 1, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 2, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 2, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 3, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 3, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 4, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 4, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 5, No. of Row: 299, No. of Column: 7820
-No. of Ticker: 460
+Full Historical Data Chunk 5, No. of Row: 302, No. of Column: 8075
+No. of Ticker: 475
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 6, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 6, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 7, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 7, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 8, No. of Row: 299, No. of Column: 13600
+Full Historical Data Chunk 8, No. of Row: 302, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 9, No. of Row: 299, No. of Column: 10693
-No. of Ticker: 629
+Full Historical Data Chunk 9, No. of Row: 302, No. of Column: 10914
+No. of Ticker: 642
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 10, No. of Row: 299, No. of Column: 4624
+Full Historical Data Chunk 10, No. of Row: 302, No. of Column: 4624
 No. of Ticker: 272
 No. of Indicator: 17
 ------------------------------------------------------------
