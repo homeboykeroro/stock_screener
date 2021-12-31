@@ -1,5 +1,5 @@
 # stock_screnner
-PROJECT INITIALIZATION STEPS:
+PROJECT SETUP:
 
 1. Run py -m venv VENV_NAME
 2. Run pip install -r requirements.txt
@@ -13,3 +13,7 @@ HOW TO USE:
 3. Run historical_data_initialiser.py to extract historical data from Stooq source files (skip the step if it has already been done before)
 4. Run chat_pattern_screener.py
 5. Type in filter condition in JSON format (templates can be found in filter_condition_templates.txt)
+
+
+FUNCTION:
+- Filter stocks based on chart pattern includeing unusual volume gap up, consolidation following unusal ramp up.
