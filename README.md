@@ -9,11 +9,11 @@ PROJECT SETUP:
 HOW TO USE:
 
 1. Download historical data zip file from stooq.com
-2. Place the zip file in STOCK_DATA_ROOT_FOLDER_DIR
+2. Place the zip file in STOCK_DATA_ROOT_FOLDER_DIR and unzip
 3. Run historical_data_initialiser.py to extract historical data from Stooq source files (skip the step if it has already been done before)
 4. Run chat_pattern_screener.py
 5. Type in filter condition in JSON format (templates can be found in filter_condition_templates.txt)
 
 
 FUNCTION:
-- Filter stocks based on chart pattern includeing unusual volume gap up, consolidation following unusal ramp up.
+- Filter stocks based on chart pattern including unusual volume gap up, consolidation following unusal ramp up.
