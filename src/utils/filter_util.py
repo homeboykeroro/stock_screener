@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 
 from constant.computation.logical_comparison import LogicialComparison
-from constant.computation.count import Count
 from constant.computation.occurrence import Occurrence
 from constant.indicator.indicator import Indicator
 from constant.indicator.customised_indicator import CustomisedIndicator

@@ -35,10 +35,10 @@ class UnusualRampUp(PatternFilter):
             min_observe_day_df = unusual_vol_and_price_change_idx_df.apply(lambda x : day_period - x)
             min_observe_day_boolean_df = (min_observe_day_df >= min_observe_day).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
             
-            high_df = historical_data_df.loc[:, idx[:, Indicator.HIGH]]
+            close_df = historical_data_df.loc[:, idx[:, Indicator.CLOSE]]
             low_df = historical_data_df.loc[:, idx[:, Indicator.LOW]]
 
-            gap_fill_value_df = get_data_by_idx(high_df, unusual_vol_and_price_change_idx_df.sub(1), replicate=False).rename(columns={Indicator.HIGH: RuntimeIndicator.COMPARE})
+            gap_fill_value_df = get_data_by_idx(close_df, unusual_vol_and_price_change_idx_df.sub(1)).rename(columns={Indicator.CLOSE: RuntimeIndicator.COMPARE})
             current_low_df = low_df.iloc[[-1]].rename(columns={Indicator.LOW: RuntimeIndicator.COMPARE}).reset_index(drop=True)
 
             filled_gap_range_boolean_df = (current_low_df >= gap_fill_value_df)

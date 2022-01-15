@@ -82,7 +82,7 @@ def append_custom_indicators(folder_dir_list: list, export_folder_dir: str) -> l
             close_change_df = close_df.pct_change().mul(100).rename(columns={Indicator.CLOSE: CustomisedIndicator.CLOSE_CHANGE})
             high_change_df = high_df.pct_change().mul(100).rename(columns={Indicator.HIGH: CustomisedIndicator.HIGH_CHANGE})
             vol_change_df = volume_df.pct_change().mul(100).rename(columns={Indicator.VOLUME: CustomisedIndicator.VOLUME_CHANGE})
-            sma_50_volume_df = volume_df.rolling(window=50).mean().rename(columns={Indicator.VOLUME: CustomisedIndicator.MA_50_VOLUME})
+            sma_50_volume_df = volume_df.rolling(window=50, min_periods=20).mean().rename(columns={Indicator.VOLUME: CustomisedIndicator.MA_50_VOLUME})
 
             #Normal Gap
             previois_close_df = compare_close_df.shift()

@@ -16,24 +16,24 @@ def select_data_by_period(src_df: DataFrame, day_period: int) -> DataFrame:
 
     return src_df.iloc[start_index:end_index]
 
-def derive_idx_df(src_df: DataFrame) -> DataFrame:
-    idx_np = src_df.reset_index(drop=True).reset_index().loc[:, idx['index', :]].values
-    return pd.DataFrame(np.repeat(idx_np, len(src_df.columns), axis=1), columns=src_df.columns).rename(columns={src_df.columns.get_level_values(1).values[0]: RuntimeIndicator.INDEX})
+def derive_idx_df(src_df: DataFrame, numeric_idx: bool = True) -> DataFrame:
+    if numeric_idx:
+        idx_np = src_df.reset_index(drop=True).reset_index().iloc[:, [0]].values
+    else:
+        idx_np = src_df.reset_index().iloc[:, [0]].values
+    
+    return pd.DataFrame(np.repeat(idx_np, len(src_df.columns), axis=1), 
+                        columns=src_df.columns).rename(columns={src_df.columns.get_level_values(1).values[0]: RuntimeIndicator.INDEX})
 
 def replicate_and_concatenate_df(src_df: DataFrame, repeat_times: int, repeat_axis = 0) -> DataFrame:
     return pd.concat([src_df] * repeat_times, axis=repeat_axis).reset_index(drop=True)
 
-def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame, replicate: bool = True) -> DataFrame:
+def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame) -> DataFrame:
     idx_df = derive_idx_df(src_df)
 
     if len(src_idx_df) == 1:
-        expand_idx_df = replicate_and_concatenate_df(src_idx_df, len(src_df), 0).set_index(idx_df.index)
-        idx_boolean_df = (expand_idx_df == idx_df)
-
-        if replicate:
-            result_df = src_df.where(idx_boolean_df.values).ffill().bfill()
-        else:
-            result_df = src_df.where(idx_boolean_df.values).fillna(method='bfill').iloc[[0]].reset_index(drop=True)
+        idx_boolean_df = idx_df.eq(src_idx_df.values)
+        result_df = src_df.where(idx_boolean_df.values).bfill().iloc[[0]].reset_index(drop=True)
     elif len(src_df) == len(src_idx_df):
         result_df = src_df.where(src_idx_df.notna().values)
 
@@ -41,14 +41,12 @@ def get_data_by_idx(src_df: DataFrame, src_idx_df: DataFrame, replicate: bool = 
 
 def get_data_by_idx_range(src_df: DataFrame, start_idx_df: DataFrame, max_range: int=None) -> DataFrame:
     idx_df = derive_idx_df(src_df)
-    expand_start_idx_df = replicate_and_concatenate_df(start_idx_df, len(src_df)).set_index(idx_df.index)
 
     if max_range != None:
         end_idx_df = start_idx_df.add(max_range)
-        expand_end_idx_df = pd.concat([end_idx_df] * len(src_df)).set_index(idx_df.index)
-        idx_boolean_df = (idx_df >= expand_start_idx_df) & (idx_df <= expand_end_idx_df)
+        idx_boolean_df = (idx_df.ge(start_idx_df.values)) & (idx_df.le(end_idx_df.values))
     else:
-        idx_boolean_df = (idx_df >= expand_start_idx_df)
+        idx_boolean_df = idx_df.ge(start_idx_df.values)
 
     return src_df.where(idx_boolean_df.values)
 
