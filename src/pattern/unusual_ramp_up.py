@@ -32,8 +32,8 @@ class UnusualRampUp(PatternFilter):
                                                                                 unusual_vol_ma_compare, min_unusual_vol_extent, min_unusual_vol_val,
                                                                                 unusual_vol_and_price_change_occurrence)
 
-            min_observe_day_df = unusual_vol_and_price_change_idx_df.apply(lambda x : day_period - x)
-            min_observe_day_boolean_df = (min_observe_day_df >= min_observe_day).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
+            observe_day_df = unusual_vol_and_price_change_idx_df.apply(lambda x : day_period - x)
+            min_observe_day_boolean_df = (observe_day_df >= min_observe_day).rename(columns={RuntimeIndicator.INDEX: RuntimeIndicator.COMPARE})
             
             close_df = historical_data_df.loc[:, idx[:, Indicator.CLOSE]]
             low_df = historical_data_df.loc[:, idx[:, Indicator.LOW]]

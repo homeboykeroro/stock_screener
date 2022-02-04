@@ -48,7 +48,7 @@ class AbcdConsolidation(PatternFilter):
                 
                 close_df = historical_data_df.loc[:, idx[:, Indicator.CLOSE]].rename(columns={Indicator.CLOSE: RuntimeIndicator.COMPARE})
                 latest_close_df = close_df.iloc[[-1]].reset_index(drop=True)
-                unusual_vol_and_price_change_close_df = get_data_by_idx(close_df, unusual_vol_and_price_change_idx_df, replicate=False)
+                unusual_vol_and_price_change_close_df = get_data_by_idx(close_df, unusual_vol_and_price_change_idx_df)
 
                 breakout_after_consolidation_boolean_df = (latest_close_df >= unusual_vol_and_price_change_close_df)
                 result_boolean_df = (consolidationi_boolean_df) & (breakout_after_consolidation_boolean_df)
