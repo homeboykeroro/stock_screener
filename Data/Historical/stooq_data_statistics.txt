@@ -1,63 +1,63 @@
 ------------------------------------------------------------
-No. of Stooq NASDAQ Ticker File: 5266
-No. of Valid NASDAQ Common Stock File: 3788
+No. of Stooq NASDAQ Ticker File: 5364
+No. of Valid NASDAQ Common Stock File: 3858
 NASDAQ Stock Historical Data Chunk 1 Size: 800
 NASDAQ Stock Historical Data Chunk 2 Size: 800
 NASDAQ Stock Historical Data Chunk 3 Size: 800
 NASDAQ Stock Historical Data Chunk 4 Size: 800
-NASDAQ Stock Historical Data Chunk 5 Size: 588
+NASDAQ Stock Historical Data Chunk 5 Size: 658
 ------------------------------------------------------------
-No. of Stooq NYSE Ticker File: 3755
-No. of Valid NYSE Common Stock File: 2748
+No. of Stooq NYSE Ticker File: 3793
+No. of Valid NYSE Common Stock File: 2792
 NYSE Stock Historical Data Chunk 1 Size: 800
 NYSE Stock Historical Data Chunk 2 Size: 800
 NYSE Stock Historical Data Chunk 3 Size: 800
-NYSE Stock Historical Data Chunk 4 Size: 348
+NYSE Stock Historical Data Chunk 4 Size: 392
 ------------------------------------------------------------
-No. of Stooq AMEX Ticker File: 314
-No. of Valid AMEX Common Stock File: 269
-AMEX Stock Historical Data Chunk 1 Size: 269
+No. of Stooq AMEX Ticker File: 328
+No. of Valid AMEX Common Stock File: 279
+AMEX Stock Historical Data Chunk 1 Size: 279
 ------------------------------------------------------------
-Total No. of Stooq Ticker File: 9335
-Total No. of Valid Common Stock File: 6805
+Total No. of Stooq Ticker File: 9485
+Total No. of Valid Common Stock File: 6929
 ------------------------------------------------------------
-Full Historical Data Chunk 1, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 1, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 2, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 2, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 3, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 3, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 4, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 4, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 5, No. of Row: 360, No. of Column: 9996
-No. of Ticker: 588
+Full Historical Data Chunk 5, No. of Row: 403, No. of Column: 11186
+No. of Ticker: 658
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 6, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 6, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 7, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 7, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 8, No. of Row: 360, No. of Column: 13600
+Full Historical Data Chunk 8, No. of Row: 403, No. of Column: 13600
 No. of Ticker: 800
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 9, No. of Row: 360, No. of Column: 5916
-No. of Ticker: 348
+Full Historical Data Chunk 9, No. of Row: 403, No. of Column: 6664
+No. of Ticker: 392
 No. of Indicator: 17
 ------------------------------------------------------------
-Full Historical Data Chunk 10, No. of Row: 360, No. of Column: 4573
-No. of Ticker: 269
+Full Historical Data Chunk 10, No. of Row: 403, No. of Column: 4743
+No. of Ticker: 279
 No. of Indicator: 17
 ------------------------------------------------------------

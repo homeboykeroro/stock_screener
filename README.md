@@ -16,4 +16,4 @@ HOW TO USE:
 
 
 FUNCTION:
-- Filter stocks based on chart pattern including unusual volume gap up, consolidation following unusal ramp up.
+- Filter stocks based on chart pattern including unusual volume gap up
